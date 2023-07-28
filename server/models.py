@@ -1,6 +1,4 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Enum
-
 from config import db, bcrypt
 
 
@@ -51,8 +49,8 @@ class Guardian(UserWithPassword):
 
     tel = db.Column(db.Integer, nullable=False)
 
-    children = db.relationship(
-        'Student', secondary=guardian_student, back_populates='guardian')
+    students = db.relationship(
+        'Student', secondary=guardian_student, back_populates='guardians')
 
     def __repr__(self):
         return f'Fist Name: {self.first_name}'
@@ -69,7 +67,7 @@ class Student(UserWithPassword):
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
 
     guardians = db.relationship(
-        'Guardian', secondary=guardian_student, back_populates='student')
+        'Guardian', secondary=guardian_student, back_populates='students')
 
     def __repr__(self):
         return f'Fist Name: {self.first_name}'
