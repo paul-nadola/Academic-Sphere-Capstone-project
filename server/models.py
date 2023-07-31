@@ -1,5 +1,9 @@
 from sqlalchemy_serializer import SerializerMixin
-from config import db
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+
+
+db = SQLAlchemy()
 
 
 
@@ -59,7 +63,7 @@ class Parents(db.Model, SerializerMixin):
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
 
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
@@ -80,7 +84,7 @@ class Teachers(db.Model, SerializerMixin):
     department = db.Column(db.String(100), nullable=False)
     course = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
 
     def __repr__(self):
         return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
