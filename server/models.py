@@ -17,6 +17,7 @@ class User(db.Model, SerializerMixin):
     parent = db.relationship('Parents', backref = 'users', uselist = False)
     teacher = db.relationship('Teachers', backref = 'users', uselist = False)
     admin = db.relationship('Admin', backref = 'users', uselist = False)
+    superadmin = db.relationship('SuperAdmin', backref = 'users', uselist = False)
 
     def __repr__(self):
         return f'<User {self.user_name} | Type: {self.user_type}>'
@@ -27,7 +28,8 @@ class Students(db.Model, SerializerMixin):
 
     student_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    student_name = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable = False)
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
@@ -36,11 +38,13 @@ class Students(db.Model, SerializerMixin):
     department = db.Column(db.String(100), nullable=False)
     course = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(100), nullable=False)
+
+
     parent_guardian = db.relationship('Parents', backref = 'Students')
     teacher = db.relationship('Teachers', backref = 'Students')
 
     def __repr__(self):
-        return f'<Student {self.student_name} | ID: {self.student_id}>'
+        return f'<Student {self.last_name} | ID: {self.student_id}>'
 
 
 class Parents(db.Model, SerializerMixin):
@@ -49,15 +53,16 @@ class Parents(db.Model, SerializerMixin):
 
     parent_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
-    parent_name = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable = False)
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
 
     def __repr__(self):
-        return f'<Parent {self.parent_name} | ID: {self.parent_id}>'
+        return f'<Parent {self.last_name} | ID: {self.parent_id}>'
     
 class Teachers(db.Model, SerializerMixin):
 
@@ -65,8 +70,8 @@ class Teachers(db.Model, SerializerMixin):
 
     teacher_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
-    teacher_name = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable = False)
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
@@ -75,9 +80,10 @@ class Teachers(db.Model, SerializerMixin):
     department = db.Column(db.String(100), nullable=False)
     course = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.id'))
 
     def __repr__(self):
-        return f'<Teacher {self.teacher_name} | ID: {self.teacher_id}>'
+        return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
 
 
 class Admin(db.Model, SerializerMixin):
@@ -86,7 +92,8 @@ class Admin(db.Model, SerializerMixin):
 
     admin_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    admin_name = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable = False)
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
@@ -95,5 +102,22 @@ class Admin(db.Model, SerializerMixin):
     appraisal = db.Column(db.Integer)
 
     def __repr__(self):
-        return f'<Admin {self.admin_name} | ID: {self.admin_id}>'
+        return f'<Admin {self.last_name} | ID: {self.admin_id}>'
 
+class SuperAdmin(db.Model, SerializerMixin):
+
+    __tablename__ = 'SuperAdmin'
+
+    super_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable = False)
+    DOB = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    employment_date = db.Column(db.String(100), nullable=False)
+
+    
+    def __repr__(self):
+        return f'<Admin {self.last_name} | ID: {self.super_id}>'
