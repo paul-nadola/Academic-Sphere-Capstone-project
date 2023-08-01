@@ -1,10 +1,7 @@
-from app import app
-
-from flask_bcrypt import Bcrypt
+from config import app, bcrypt
 import random
 import string
 from models import db, User, Admin,SuperAdmin,Parents,Students,Teachers
-bcrypt = Bcrypt()
 
 def generate_random_string(length=10):
     return ''.join(random.choices(string.ascii_letters, k=length))
