@@ -1,13 +1,14 @@
-from sqlalchemy_serializer import SerializerMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from app import app
+from sqlalchemy.ext.hybrid import hybrid_property
 
 
 db = SQLAlchemy()
 
+bcrypt = Bcrypt(app)
 
-
-class User(db.Model, SerializerMixin):
+class User(db.Model):
 
     __tablename__ = 'users'
 
@@ -23,10 +24,23 @@ class User(db.Model, SerializerMixin):
     admin = db.relationship('Admin', backref = 'users', uselist = False)
     superadmin = db.relationship('SuperAdmin', backref = 'users', uselist = False)
 
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
+
+    @password_hash.setter
+    def password_hash(self, password):
+        hashed_password = bcrypt.generate_password_hash(
+            password.encode('utf-8'))
+        self._password_hash = hashed_password.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
+
     def __repr__(self):
         return f'<User {self.user_name} | Type: {self.user_type}>'
 
-class Students(db.Model, SerializerMixin):
+class Students(db.Model):
 
     __tablename__ = 'Students'
 
@@ -42,16 +56,18 @@ class Students(db.Model, SerializerMixin):
     department = db.Column(db.String(100), nullable=False)
     course = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(100), nullable=False)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
 
 
     parent_guardian = db.relationship('Parents', backref = 'Students')
     teacher = db.relationship('Teachers', backref = 'Students')
+    course = db.relationship('Course', backref= 'Students')
 
     def __repr__(self):
         return f'<Student {self.last_name} | ID: {self.student_id}>'
 
 
-class Parents(db.Model, SerializerMixin):
+class Parents(db.Model):
 
     __tablename__ = 'Parents'
 
@@ -68,7 +84,7 @@ class Parents(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
     
-class Teachers(db.Model, SerializerMixin):
+class Teachers(db.Model):
 
     __tablename__ = 'Teachers'
 
@@ -85,12 +101,15 @@ class Teachers(db.Model, SerializerMixin):
     course = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
+
+    course = db.relationship('Course', backref= 'Teachers')
 
     def __repr__(self):
         return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
 
 
-class Admin(db.Model, SerializerMixin):
+class Admin(db.Model):
 
     __tablename__ = 'Admin'
 
@@ -108,7 +127,7 @@ class Admin(db.Model, SerializerMixin):
     def __repr__(self):
         return f'<Admin {self.last_name} | ID: {self.admin_id}>'
 
-class SuperAdmin(db.Model, SerializerMixin):
+class SuperAdmin(db.Model):
 
     __tablename__ = 'SuperAdmin'
 
@@ -125,3 +144,28 @@ class SuperAdmin(db.Model, SerializerMixin):
     
     def __repr__(self):
         return f'<Admin {self.last_name} | ID: {self.super_id}>'
+    
+class Departments(db.Model):
+
+    __tablename__ = 'Departments'
+
+    department_id = db.Column(db.Integer, primary_key=True)
+    department_name = db.Column(db.String(255), nullable=False)
+    hod_name = db.Column(db.String(255), nullable=False)
+
+    teachers = db.relationship('Teachers', backref= 'Departments')
+    students = db.relationship('Students', backref= 'Departments')
+    course = db.relationship('Course', backref= 'Departments')
+
+    def __repr__(self):
+        return f'Department: {self.department_name} HOD:{self.hod_name}'
+    
+class Course(db.Model):
+    
+    __tablename__ = 'Course'
+
+    course_id = db.Column(db.Integer, primary_key=True)
+    course_name = db.Column(db.String(255), index= True, nullable=False)
+    department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.teacher_id'))
