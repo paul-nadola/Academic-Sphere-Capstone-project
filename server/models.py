@@ -1,5 +1,5 @@
 from sqlalchemy.ext.hybrid import hybrid_property
-from config import db, bcrypt
+from config import db, bcrypt, app
 
 
 class UserWithPassword(db.Model):
@@ -29,7 +29,7 @@ class UserWithPassword(db.Model):
 class Admin(UserWithPassword):
     __tablename__ = "admins"
 
-    tel = db.Column(db.Integer, nullable=False)
+    tel = db.Column(db.String(length=20), nullable=False)
 
     def __repr__(self):
         return f'Fist Name: {self.first_name}'
@@ -161,3 +161,7 @@ class OtherExpenses(db.Model):
 
     expense_name = db.Column(db.String, nullable=False)
     amount = db.Column(db.Integer, nullable=False)
+
+
+with app.app_context():
+    db.create_all()
