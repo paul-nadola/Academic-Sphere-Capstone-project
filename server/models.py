@@ -40,6 +40,20 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.user_name} | Type: {self.user_type}>'
 
+student_units_table = db.Table('student_units',
+    db.Column('student_id', db.Integer, db.ForeignKey('Students.student_id'), primary_key=True),
+    db.Column('units_id', db.Integer, db.ForeignKey('Units.units_id'), primary_key=True)
+)
+
+student_assessment_table = db.Table('student_assessment',
+    db.Column('student_id', db.Integer, db.ForeignKey('Students.student_id'), primary_key=True),
+    db.Column('assessment_id', db.Integer, db.ForeignKey('Assessment.assessment_id'), primary_key=True)
+)
+student_grade_table = db.Table('student_grade',
+    db.Column('student_id', db.Integer, db.ForeignKey('Students.student_id'), primary_key=True),
+    db.Column('grade_id', db.Integer, db.ForeignKey('Grade.grade_id'), primary_key=True)
+)
+
 class Students(db.Model):
 
     __tablename__ = 'Students'
@@ -59,6 +73,9 @@ class Students(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'))
     payment_id = db.Column(db.Integer, db.ForeignKey('Payments.payment_id'))
 
+    units = db.relationship('Units', secondary=student_units_table, back_populates='Students', cascade='all, delete-orphan')
+    assesment = db.relationship('Assessment', secondary=student_assessment_table, back_populates='Students', cascade='all, delete-orphan')
+    grade = db.relationship('Grades', secondary=student_grade_table, back_populates='Students', cascade='all, delete-orphan')
     parent_guardian = db.relationship('Parents', backref = 'Students', cascade='all, delete-orphan')
     teacher = db.relationship('Teachers', backref = 'Students', cascade='all, delete-orphan')
     attendance = db.relationship('StudentAttendance', backref='Students' ,cascade='all, delete-orphan')
@@ -80,9 +97,9 @@ class Parents(db.Model):
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+
+    enquiry = db.relationship('Enquiry', backref='Parents', cascade='all, delete-orphan')
     
-
-
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
     
@@ -107,6 +124,7 @@ class Teachers(db.Model):
 
     attendance = db.relationship('TeacherAttendance', backref='Teachers' ,cascade='all, delete-orphan')
     leave = db.relationship('LeaveOfAbsence', backref='Teachers' ,cascade='all, delete-orphan')
+    response = db.relationship('Response', backref='Teachers', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
@@ -163,6 +181,7 @@ class Departments(db.Model):
     def __repr__(self):
         return f'Department: {self.department_name} HOD:{self.hod_name}'
     
+
 class Course(db.Model):
     
     __tablename__ = 'Course'
@@ -173,10 +192,54 @@ class Course(db.Model):
 
     students = db.relationship('Students', backref='Course', cascade='all, delete-orphan')
     teachers = db.relationship('Teachers', backref='Course', cascade='all, delete-orphan')
+    units= db.relationship('Units', backref='Course', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'Course: {self.course_name} ID:{self.course_id}'
     
+    
+class Units(db.Model):
+
+    __tablename__ = 'Units'
+
+    unit_id = db.Column(db.Integer, primary_key=True)
+    unit_name = db.Column(db.String(255), nullable=False, index=True)
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'))
+
+    assessment= db.relationship('Assessment', backref='Units', cascade='all, delete-orphan')
+    students = db.relationship('Students', secondary=student_units_table, back_populates='Units', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'Unit: {self.unit_name} ID:{self.unit_id}'
+
+    
+class Assessment(db.Model):
+
+    __tablename__ = 'Assessment'
+
+    assessment_id = db.Column(db.Integer, primary_key=True)
+    assessment_name = db.Column(db.String(255), nullable=False, index=True)
+    unit_id = db.Column(db.Integer, db.ForeignKey('Units.unit_id'))
+
+    students = db.relationship('Students', secondary=student_units_table, back_populates='Assessment', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'Assessment: {self.assessment_name} ID:{self.assessment_id}'
+    
+class Grades(db.Model):
+
+    __tablename__ = 'Grades'
+
+    grade_id = db.Column(db.Integer, primary_key=True)
+    grade = db.Column(db.String(10), nullable=False)
+    assessment_id = db.Column(db.Integer, db.ForeignKey('Assessment.assessment_id'))
+
+    students = db.relationship('Students', secondary=student_grade_table, back_populates='Grades', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'Grade: {self.grade} ID:{self.grade_id}'
+
+
 
 class Payments(db.Model):
     __tablename__ = 'Payments'
@@ -231,9 +294,34 @@ class LeaveOfAbsence(db.Model):
     status = db.Column(db.String(25))
 
     def __repr__(self):
-        return f'Date: {self.date} ID:{self.attendance_id}' 
+        return f'Date: {self.date} ID:{self.leave_id}' 
+    
 
 
+class Enquiry(db.Model):
+
+    __tablename__ = 'enquiry'
+
+    enquiry_id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(255), index=True, nullable=False)
+    body = db.Column(db.String, nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('Parents.parent_id'))
+
+    def __repr__(self):
+        return f'Enquiry: {self.subject} ID:{self.parent_id}' 
+    
+
+class Response(db.Model):
+
+    __tablename__ = 'Response'
+
+    response_id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(255), index=True, nullable=False)
+    body = db.Column(db.String, nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.teacher_id'))
+
+    def __repr__(self):
+        return f'Response: {self.subject} ID:{self.teacher_id}' 
 
 
 
