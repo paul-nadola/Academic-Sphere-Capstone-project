@@ -1,19 +1,15 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
-from app import app
+from config import db, bcrypt
 from sqlalchemy.ext.hybrid import hybrid_property
 
 
-db = SQLAlchemy()
 
-bcrypt = Bcrypt(app)
 
 class User(db.Model):
 
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(40), index = True ,unique = True ,nullable=False)
     email = db.Column(db.String(40), index = True ,unique = True , nullable=False)
     password = db.Column(db.String(65), nullable=False)
     user_type = db.Column(db.String(40))
