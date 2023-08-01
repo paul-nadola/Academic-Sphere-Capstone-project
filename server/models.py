@@ -42,7 +42,7 @@ class User(db.Model):
 
 student_units_table = db.Table('student_units',
     db.Column('student_id', db.Integer, db.ForeignKey('Students.student_id'), primary_key=True),
-    db.Column('units_id', db.Integer, db.ForeignKey('Units.units_id'), primary_key=True)
+    db.Column('units_id', db.Integer, db.ForeignKey('Units.unit_id'), primary_key=True)
 )
 
 student_assessment_table = db.Table('student_assessment',
@@ -51,7 +51,7 @@ student_assessment_table = db.Table('student_assessment',
 )
 student_grade_table = db.Table('student_grade',
     db.Column('student_id', db.Integer, db.ForeignKey('Students.student_id'), primary_key=True),
-    db.Column('grade_id', db.Integer, db.ForeignKey('Grade.grade_id'), primary_key=True)
+    db.Column('grade_id', db.Integer, db.ForeignKey('Grades.grade_id'), primary_key=True)
 )
 
 class Students(db.Model):
