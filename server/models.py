@@ -94,7 +94,6 @@ class Teachers(db.Model):
     email = db.Column(db.String(255), nullable=False)
     employment_date = db.Column(db.String(100), nullable=False)
     department = db.Column(db.String(100), nullable=False)
-    course = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
     department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))

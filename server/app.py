@@ -12,10 +12,17 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-        exclude =('password',)
+        exclude = ('password',)
+
+
+class TeacherSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Teachers
+        load_instance = True
 
 
 userSchema = UserSchema()
+teacherSchema = TeacherSchema()
 
 
 # LOGIN ALL USERS
@@ -23,36 +30,40 @@ userSchema = UserSchema()
 def login():
     data = request.get_json()
     email = data['email']
+    password = data['password']
     user = User.query.filter_by(email=email).first()
     if user:
-        if user.user_type == "teacher":
-            token = create_access_token(
-                identity={"email": user.email, "role": user.user_type})
-            return jsonify(token=token, user=userSchema.dump(user))
+        if user.authenticate(password):
+            if user.user_type == "teacher":
+                token = create_access_token(
+                    identity={"email": user.email, "role": user.user_type})
+                return jsonify(token=token, user=userSchema.dump(user))
 
-        if user.user_type == "admin":
-            token = create_access_token(
-                identity={"email": user.email, "role": user.user_type})
-            return jsonify(token=token, user=userSchema.dump(user))
+            if user.user_type == "admin":
+                token = create_access_token(
+                    identity={"email": user.email, "role": user.user_type})
+                return jsonify(token=token, user=userSchema.dump(user))
 
-        if user.user_type == "superadmin":
-            token = create_access_token(
-                identity={"email": user.email, "role": user.user_type})
-            return jsonify(token=token, user=userSchema.dump(user))
+            if user.user_type == "superadmin":
+                token = create_access_token(
+                    identity={"email": user.email, "role": user.user_type})
+                return jsonify(token=token, user=userSchema.dump(user))
 
-        if user.user_type == "student":
-            token = create_access_token(
-                identity={"email": user.email, "role": user.user_type})
-            return jsonify(token=token, user=userSchema.dump(user))
+            if user.user_type == "student":
+                token = create_access_token(
+                    identity={"email": user.email, "role": user.user_type})
+                return jsonify(token=token, user=userSchema.dump(user))
 
-        if user.user_type == "parent":
-            token = create_access_token(
-                identity={"email": user.email, "role": user.user_type})
-            return jsonify(token=token, user=userSchema.dump(user))
+            if user.user_type == "parent":
+                token = create_access_token(
+                    identity={"email": user.email, "role": user.user_type})
+                return jsonify(token=token, user=userSchema.dump(user))
 
     return {"Error": "User does not exist"}
 
 # CHECK CURRENT USER
+
+
 @app.route('/session', methods=['POST'])
 @jwt_required()
 def session():
@@ -61,13 +72,26 @@ def session():
     user = User.query.filter_by(email=email).first()
     return jsonify(user=userSchema.dump(user))
 
+
+# SUPER USER FUNCTIONALITY
+
+
 # GET ALL USERS
-@app.route('/users', methods=['GET', 'POST'])
-@jwt_required
-def get_users():
+@app.route('/superadmin', methods=['GET', 'POST'])
+@jwt_required()
+def handle_users():
+    token_data = get_jwt_identity()
+    email = token_data['email']
+    user = User.query.filter_by(email=email).first()
+    if user.user_type != 'superadmin':
+        return {"msg": "Unauthorized"}
+
     if request.method == 'GET':
-        users = User.query.all()
-        return userSchema.dump(users, many=True)
+        teachers = Teachers.query.all()
+        return teacherSchema.dump(teachers, many=True)
+
+    if request.method == 'POST':
+        data = request.get_json()
 
 
 @app.route('/register', methods=['POST'])
