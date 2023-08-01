@@ -1,12 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from app import app
 from sqlalchemy.ext.hybrid import hybrid_property
+from datetime import datetime
 
+bcrypt = Bcrypt()
 
 db = SQLAlchemy()
 
-bcrypt = Bcrypt(app)
 
 class User(db.Model):
 
@@ -18,11 +18,11 @@ class User(db.Model):
     password = db.Column(db.String(65), nullable=False)
     user_type = db.Column(db.String(40))
 
-    student = db.relationship('Students', backref = 'users', uselist = False)
-    parent = db.relationship('Parents', backref = 'users', uselist = False)
-    teacher = db.relationship('Teachers', backref = 'users', uselist = False)
-    admin = db.relationship('Admin', backref = 'users', uselist = False)
-    superadmin = db.relationship('SuperAdmin', backref = 'users', uselist = False)
+    student = db.relationship('Students', backref = 'users', uselist = False, cascade='all, delete-orphan')
+    parent = db.relationship('Parents', backref = 'users', uselist = False, cascade='all, delete-orphan')
+    teacher = db.relationship('Teachers', backref = 'users', uselist = False, cascade='all, delete-orphan')
+    admin = db.relationship('Admin', backref = 'users', uselist = False, cascade='all, delete-orphan')
+    superadmin = db.relationship('SuperAdmin', backref = 'users', uselist = False, cascade='all, delete-orphan')
 
     @hybrid_property
     def password_hash(self):
@@ -54,14 +54,14 @@ class Students(db.Model):
     email = db.Column(db.String(255), nullable=False)
     enrollment_date = db.Column(db.String(100), nullable=False)
     department = db.Column(db.String(100), nullable=False)
-    course = db.Column(db.String(100), nullable=False)
     grade = db.Column(db.String(100), nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'))
+    payment_id = db.Column(db.Integer, db.ForeignKey('Payments.payment_id'))
 
-
-    parent_guardian = db.relationship('Parents', backref = 'Students')
-    teacher = db.relationship('Teachers', backref = 'Students')
-    course = db.relationship('Course', backref= 'Students')
+    parent_guardian = db.relationship('Parents', backref = 'Students', cascade='all, delete-orphan')
+    teacher = db.relationship('Teachers', backref = 'Students', cascade='all, delete-orphan')
+    attendance = db.relationship('StudentAttendance', backref='Students' ,cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Student {self.last_name} | ID: {self.student_id}>'
@@ -80,6 +80,8 @@ class Parents(db.Model):
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+    
+
 
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
@@ -98,12 +100,13 @@ class Teachers(db.Model):
     email = db.Column(db.String(255), nullable=False)
     employment_date = db.Column(db.String(100), nullable=False)
     department = db.Column(db.String(100), nullable=False)
-    course = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
     department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('Course.course_id'))
 
-    course = db.relationship('Course', backref= 'Teachers')
+    attendance = db.relationship('TeacherAttendance', backref='Teachers' ,cascade='all, delete-orphan')
+    leave = db.relationship('LeaveOfAbsence', backref='Teachers' ,cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
@@ -153,9 +156,9 @@ class Departments(db.Model):
     department_name = db.Column(db.String(255), nullable=False)
     hod_name = db.Column(db.String(255), nullable=False)
 
-    teachers = db.relationship('Teachers', backref= 'Departments')
-    students = db.relationship('Students', backref= 'Departments')
-    course = db.relationship('Course', backref= 'Departments')
+    teachers = db.relationship('Teachers', backref= 'Departments', cascade='all, delete-orphan')
+    students = db.relationship('Students', backref= 'Departments', cascade='all, delete-orphan')
+    course = db.relationship('Course', backref= 'Departments', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'Department: {self.department_name} HOD:{self.hod_name}'
@@ -167,5 +170,70 @@ class Course(db.Model):
     course_id = db.Column(db.Integer, primary_key=True)
     course_name = db.Column(db.String(255), index= True, nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('Departments.department_id'))
-    student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+
+    students = db.relationship('Students', backref='Course', cascade='all, delete-orphan')
+    teachers = db.relationship('Teachers', backref='Course', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'Course: {self.course_name} ID:{self.course_id}'
+    
+
+class Payments(db.Model):
+    __tablename__ = 'Payments'
+
+    payment_id = db.Column(db.Integer, primary_key=True)
+    payment_type = db.Column(db.String(255), index= True, nullable=False)
+    amount = db.Column(db.Integer)
+    balance = db.Column(db.Integer)
+
+
+    students = db.relationship('Students', backref='Payments' ,cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f'Payment Name: {self.payment_type} ID:{self.payment_id}'
+    
+
+class TeacherAttendance(db.Model):
+
+    __tablename__ = 'TeacherAttendance'
+
+    attendance_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.teacher_id'))
+    attendance=db.Column(db.String(20))
+
+    def __repr__(self):
+        return f'Date: {self.date} ID:{self.attendance_id}' 
+    
+
+class StudentAttendance(db.Model):
+
+    __tablename__ = 'StudentAttendance'
+
+    attendance_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    student_id = db.Column(db.Integer, db.ForeignKey('Students.student_id'))
+    attendance=db.Column(db.String(20))
+
+    def __repr__(self):
+        return f'Date: {self.date} ID:{self.attendance_id}' 
+    
+
+class LeaveOfAbsence(db.Model):
+
+    __tablename__ = 'LeaveOfAbsence'
+
+    leave_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('Teachers.teacher_id'))
+    start=db.Column(db.DateTime)
+    start=db.Column(db.DateTime)
+    status = db.Column(db.String(25))
+
+    def __repr__(self):
+        return f'Date: {self.date} ID:{self.attendance_id}' 
+
+
+
+
+

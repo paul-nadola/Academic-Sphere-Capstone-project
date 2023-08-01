@@ -1,5 +1,6 @@
 import os
 from flask_cors import CORS
+
 from flask import Flask, jsonify, session,request, make_response
 from models import  db, User
 from flask_migrate import Migrate
