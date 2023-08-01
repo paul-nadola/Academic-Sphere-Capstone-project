@@ -12,16 +12,13 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
+        exclude =('password',)
 
 
 userSchema = UserSchema()
 
 
-@app.route('/')
-def index():
-    return jsonify(detail='Welcome, this is a test route')
-
-
+# LOGIN ALL USERS
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -55,8 +52,18 @@ def login():
 
     return {"Error": "User does not exist"}
 
+# CHECK CURRENT USER
+@app.route('/session', methods=['POST'])
+@jwt_required()
+def session():
+    token_data = get_jwt_identity()
+    email = token_data['email']
+    user = User.query.filter_by(email=email).first()
+    return jsonify(user=userSchema.dump(user))
 
+# GET ALL USERS
 @app.route('/users', methods=['GET', 'POST'])
+@jwt_required
 def get_users():
     if request.method == 'GET':
         users = User.query.all()
