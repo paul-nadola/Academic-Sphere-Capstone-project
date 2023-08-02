@@ -131,39 +131,8 @@ def register():
     data = request.get_json()
     role = data['role']
 
-    email = data['email']
-    password = data['password']
-    user_type = data['user_type']
-    user = User
-    if user:
-        if user.authenticate(password):
-            result = userSchema.dump(user)
-            access_token = create_access_token(
-                identity={"email": email, "id": user.id})
-            return jsonify(access_token=access_token, user=result)
-        return {"msg": "Wrong password"}
-    return {"msg": "User does not exist"}
 
-@app.route('/users', methods=['GET', 'POST'])
-def get_users():
-    if request.method == 'GET':
-        user_list = []
-        users = User.query.all()
-        for user in users:
-            user_list.append({
-                "id": user.id,
-                "user_name": user.user_name,
-                "email": user.email,
-                "password": user.password,
-                "user_type": user.user_type,
-                
-            })
-        response = make_response(
-            jsonify(user_list),
-                    200
-        )
-        response.headers['Content-Type'] = 'application/json'
-        return response
+
 
 
 if __name__ == "__main__":
