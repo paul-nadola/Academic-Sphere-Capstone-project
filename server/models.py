@@ -16,15 +16,15 @@ class User(db.Model):
     user_type = db.Column(db.String(40))
 
     student = db.relationship(
-        'Student', backref='users', uselist=False, cascade='all, delete-orphan')
+        'Student', backref='users', uselist=False, cascade='all')
     parent = db.relationship('Parent', backref='users',
-                             uselist=False, cascade='all, delete-orphan')
+                             uselist=False, cascade='all')
     teacher = db.relationship(
-        'Teacher', backref='users', uselist=False, cascade='all, delete-orphan')
+        'Teacher', backref='users', uselist=False, cascade='all')
     admin = db.relationship('Admin', backref='users',
-                            uselist=False, cascade='all, delete-orphan')
+                            uselist=False, cascade='all')
     superadmin = db.relationship(
-        'SuperAdmin', backref='users', uselist=False, cascade='all, delete-orphan')
+        'SuperAdmin', backref='users', uselist=False, cascade='all')
 
     @hybrid_property
     def password_hash(self):
@@ -83,17 +83,17 @@ class Student(db.Model):
     payment_id = db.Column(db.Integer, db.ForeignKey('payments.payment_id'))
 
     units = db.relationship('Unit', secondary=student_units_table,
-                            back_populates='students', cascade='all, delete-orphan')
-    assessment = db.relationship('Assessment', secondary=student_assessment_table,
-                                 back_populates='students', cascade='all, delete-orphan')
-    grade = db.relationship('Grade', secondary=student_grade_table,
-                            back_populates='students', cascade='all, delete-orphan')
+                            back_populates='students', cascade='all')
+    assessments = db.relationship('Assessment', secondary=student_assessment_table,
+                                 back_populates='students', cascade='all')
+    grades = db.relationship('Grade', secondary=student_grade_table,
+                            back_populates='students', cascade='all')
     parent_guardian = db.relationship(
-        'Parent', backref='student', cascade='all, delete-orphan')
+        'Parent', backref='student', cascade='all')
     teacher = db.relationship(
-        'Teacher', backref='student', cascade='all, delete-orphan')
+        'Teacher', backref='student', cascade='all')
     attendance = db.relationship(
-        'StudentAttendance', backref='student', cascade='all, delete-orphan')
+        'StudentAttendance', backref='student', cascade='all')
 
     def __repr__(self):
         return f'<Student {self.last_name} | ID: {self.student_id}>'
@@ -114,7 +114,7 @@ class Parent(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
 
     enquiry = db.relationship(
-        'Enquiry', backref='parent', cascade='all, delete-orphan')
+        'Enquiry', backref='parent', cascade='all')
 
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
@@ -133,7 +133,6 @@ class Teacher(db.Model):
     phone_number = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False)
     employment_date = db.Column(db.String(100), nullable=False)
-    department = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
     department_id = db.Column(
@@ -141,11 +140,11 @@ class Teacher(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
 
     attendance = db.relationship(
-        'TeacherAttendance', backref='teacher', cascade='all, delete-orphan')
+        'TeacherAttendance', backref='teacher', cascade='all')
     leave = db.relationship(
-        'LeaveOfAbsence', backref='teacher', cascade='all, delete-orphan')
+        'LeaveOfAbsence', backref='teacher', cascade='all')
     response = db.relationship(
-        'Response', backref='teacher', cascade='all, delete-orphan')
+        'Response', backref='teacher', cascade='all')
 
     def __repr__(self):
         return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
@@ -197,11 +196,11 @@ class Department(db.Model):
     hod_name = db.Column(db.String(255), nullable=False)
 
     teachers = db.relationship(
-        'Teacher', backref='department', cascade='all, delete-orphan')
+        'Teacher', backref='department', cascade='all')
     students = db.relationship(
-        'Student', backref='department', cascade='all, delete-orphan')
+        'Student', backref='department', cascade='all')
     course = db.relationship(
-        'Course', backref='department', cascade='all, delete-orphan')
+        'Course', backref='department', cascade='all')
 
     def __repr__(self):
         return f'Department: {self.department_name} HOD:{self.hod_name}'
@@ -217,11 +216,11 @@ class Course(db.Model):
         db.Integer, db.ForeignKey('departments.department_id'))
 
     students = db.relationship(
-        'Student', backref='course', cascade='all, delete-orphan')
+        'Student', backref='course', cascade='all')
     teachers = db.relationship(
-        'Teacher', backref='course', cascade='all, delete-orphan')
+        'Teacher', backref='course', cascade='all')
     units = db.relationship('Unit', backref='course',
-                            cascade='all, delete-orphan')
+                            cascade='all')
 
     def __repr__(self):
         return f'Course: {self.course_name} ID:{self.course_id}'
@@ -236,9 +235,9 @@ class Unit(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
 
     assessment = db.relationship(
-        'Assessment', backref='unit', cascade='all, delete-orphan')
+        'Assessment', backref='unit', cascade='all')
     students = db.relationship('Student', secondary=student_units_table,
-                               back_populates='units', cascade='all, delete-orphan')
+                               back_populates='units', cascade='all')
 
     def __repr__(self):
         return f'Unit: {self.unit_name} ID:{self.unit_id}'
@@ -252,8 +251,8 @@ class Assessment(db.Model):
     assessment_name = db.Column(db.String(255), nullable=False, index=True)
     unit_id = db.Column(db.Integer, db.ForeignKey('units.unit_id'))
 
-    students = db.relationship('Students', secondary=student_units_table,
-                               back_populates='assessments', cascade='all, delete-orphan')
+    students = db.relationship('Student', secondary=student_assessment_table,
+                               back_populates='assessments', cascade='all')
 
     def __repr__(self):
         return f'Assessment: {self.assessment_name} ID:{self.assessment_id}'
@@ -269,7 +268,7 @@ class Grade(db.Model):
         db.Integer, db.ForeignKey('assessments.assessment_id'))
 
     students = db.relationship('Student', secondary=student_grade_table,
-                               back_populates='grades', cascade='all, delete-orphan',)
+                               back_populates='grades', cascade='all',)
 
     def __repr__(self):
         return f'Grade: {self.grade} ID:{self.grade_id}'
@@ -284,7 +283,7 @@ class Payment(db.Model):
     balance = db.Column(db.Integer)
 
     students = db.relationship(
-        'Student', backref='payment', cascade='all, delete-orphan')
+        'Student', backref='payment', cascade='all')
 
     def __repr__(self):
         return f'Payment Name: {self.payment_type} ID:{self.payment_id}'
