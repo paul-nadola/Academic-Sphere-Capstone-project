@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from models import User, Parents, Teachers, Students, Admin, SuperAdmin
+from models import User, Parent, Teacher, Student, Admin, SuperAdmin
 from config import app
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
@@ -17,7 +17,7 @@ class UserSchema(SQLAlchemyAutoSchema):
 
 class TeacherSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Teachers
+        model = Teacher
         load_instance = True
 
 
@@ -58,8 +58,9 @@ def login():
                 token = create_access_token(
                     identity={"email": user.email, "role": user.user_type})
                 return jsonify(token=token, user=userSchema.dump(user))
+        return {"msg":"Wrong password"}
 
-    return {"Error": "User does not exist"}
+    return {"msg": "User does not exist"}
 
 # CHECK CURRENT USER
 
