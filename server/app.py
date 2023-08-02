@@ -253,5 +253,23 @@ def superadmin_edit(id):
 
 # ADMIN FUNCTIONALITY
 
+@app.route('/admin_create', methods=['GET','POST'])
+@jwt_required()
+def admin_create():
+    try:
+        token_data = get_jwt_identity()
+        user_email = token_data['email']
+        user = User.query.filter_by(email=user_email).first()
+        if user.user_type.lower() != 'admin':
+            return {"msg": "Unauthorized"}
+        
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred"}), 500
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5555)
