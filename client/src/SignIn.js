@@ -18,7 +18,7 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('YOUR_API_ENDPOINT_URL', {
+      const response = await fetch('URL', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ function SignIn() {
       // redirect to a new page on successful login.
       console.log('Response:', data);
     } catch (error) {
-      // Handle error, e.g. display an error message to the user.
+      // display an error message to the user.
       console.error('Error:', error);
     }
   };

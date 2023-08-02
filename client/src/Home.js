@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function Home() {
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center relative" // Add 'relative' class here
+      className="min-h-screen bg-cover bg-center flex items-center justify-center relative" 
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1617372613217-0dd41ca2229c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80')`,
         backgroundSize: 'cover',

@@ -25,4 +25,4 @@ function ParentsPage() {
   )
 }
 
-export default ParentsPage
+export default ParentsPage;
