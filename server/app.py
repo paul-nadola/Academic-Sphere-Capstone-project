@@ -1,6 +1,7 @@
 from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin
 from config import app
+import datetime
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -12,7 +13,7 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-        exclude = ('password',)
+        # exclude = ('password',)
 
 
 class TeacherSchema(SQLAlchemyAutoSchema):
@@ -88,7 +89,7 @@ def handle_users():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
-        teachers = Teachers.query.all()
+        teachers = Teacher.query.all()
         return teacherSchema.dump(teachers, many=True)
 
     if request.method == 'POST':

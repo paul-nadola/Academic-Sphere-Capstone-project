@@ -12,7 +12,7 @@ class User(db.Model):
     user_name = db.Column(db.String(40), index=True,
                           unique=True, nullable=False)
     email = db.Column(db.String(40), index=True, unique=True, nullable=False)
-    password = db.Column(db.String(65), nullable=False)
+    _password_hash = db.Column(db.String(65), nullable=False)
     user_type = db.Column(db.String(40))
 
     student = db.relationship(
@@ -75,7 +75,6 @@ class Student(db.Model):
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
     enrollment_date = db.Column(db.String(100), nullable=False)
     department_id = db.Column(
         db.Integer, db.ForeignKey('departments.department_id'))
@@ -110,7 +109,6 @@ class Parent(db.Model):
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
 
     enquiry = db.relationship(
@@ -131,7 +129,6 @@ class Teacher(db.Model):
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
     employment_date = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
@@ -161,7 +158,6 @@ class Admin(db.Model):
     DOB = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
     employment_date = db.Column(db.String(100), nullable=False)
     appraisal = db.Column(db.Integer)
 
@@ -177,11 +173,10 @@ class SuperAdmin(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.String(100), nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
-    employment_date = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
 
     def __repr__(self):
         return f'<Admin {self.last_name} | ID: {self.super_id}>'
