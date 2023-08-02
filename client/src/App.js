@@ -22,6 +22,7 @@ function App() {
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
           <Route path="/parents" element={<ParentsPage />} />
+          {/* <Route path="/teachers" element={<TeacherPage/>} /> */}
         </Routes>
       </div>
     </Router>
