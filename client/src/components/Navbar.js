@@ -15,7 +15,9 @@ function Navbar() {
     openSubmenu(page, {center, bottom})
 
   }
-
+  const handleClick = () =>{
+    
+  }
   const handleSubmenu = (e) => {
     if(!e.target.classList.contains('link-btn')) {
       setTimeout(()=>closeSubmenu(),10);
@@ -52,7 +54,7 @@ function Navbar() {
             </button>
             </li>           
         </ul>
-        <button className='btn signin-btn'>Sign In</button>
+        <button className='btn signin-btn' onClick={handleClick}>Sign In</button>
       </div>
       </nav>
   )
