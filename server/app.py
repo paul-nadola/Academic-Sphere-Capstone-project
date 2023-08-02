@@ -34,7 +34,7 @@ class SuperAdminSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = SuperAdmin
         load_instance = True
-        
+
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
 
@@ -43,7 +43,7 @@ class AdminSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Admin
         load_instance = True
-        
+
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
 
@@ -52,7 +52,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Student
         load_instance = True
-        
+
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
 
@@ -61,7 +61,7 @@ class ParentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Parent
         load_instance = True
-        
+
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
 
@@ -130,8 +130,8 @@ def handle_users():
 
     if request.method == 'GET':
         teachers = Teacher.query.all()
-        admins = User.query.filter_by(user_type="admin").all()
-        return jsonify(admins=userSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
+        admins = Admin.query.all()
+        return jsonify(admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
         data = request.get_json()
@@ -151,16 +151,16 @@ def handle_users():
         db.session.add(user)
         db.session.commit()
 
-        if user_type == 'Admin':
-            obj = {'first_name': data['first_name'],
-                   'user_id': user.id,
-                   'last_name': data['last_name'],
-                   'DOB': data['DOB'],
-                   'address': data['address'],
-                   'phone_number': data['phone_number'],
-                   'employment_date': data['employment_date'],
-                   'appraisal': data['appraisal']}
+        obj = {'first_name': data['first_name'],
+               'user_id': user.id,
+               'last_name': data['last_name'],
+               'DOB': data['DOB'],
+               'address': data['address'],
+               'phone_number': data['phone_number'],
+               'employment_date': data['employment_date'],
+               'appraisal': data['appraisal']}
 
+        if user_type == 'Admin':
             admin = Admin(**obj)
 
             db.session.add(admin)
@@ -169,15 +169,6 @@ def handle_users():
             return jsonify(user=adminSchema.dump(admin))
 
         if user_type == 'Teacher':
-            obj = {'first_name': data['first_name'],
-                   'user_id': user.id,
-                   'last_name': data['last_name'],
-                   'DOB': data['DOB'],
-                   'address': data['address'],
-                   'phone_number': data['phone_number'],
-                   'employment_date': data['employment_date'],
-                   'appraisal': data['appraisal']}
-
             teacher = Teacher(**obj)
 
             db.session.add(teacher)
