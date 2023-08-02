@@ -24,7 +24,7 @@ function ParentsPage() {
       
       <button className="mt-4 mb-2">
             <Link
-              to="/"
+              to="/signin"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
             >
               Sign Out
