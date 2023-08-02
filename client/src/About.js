@@ -21,6 +21,7 @@ function About() {
         <section className="text-left">
           <p>
             Welcome to Prudent Group of Schools, where we believe that education is the foundation for shaping young minds<br/> and empowering future leaders. With a legacy of excellence in education, our institution is dedicated to providing a<br/> nurturing and stimulating environment for students to discover their potential, embrace their curiosity, and achieve<br/> academic excellence.
+            
           </p>
           <p>
             <span style={{ color: '#3B82F6' }}><b>Our Vision:</b></span> At Prudent Group of Schools, our vision is to be a leading institution of academic excellence, fostering an<br/> inclusive and innovative learning community that inspires students to become lifelong learners and compassionate global citizens.
