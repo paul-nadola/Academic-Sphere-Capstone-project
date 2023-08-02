@@ -2,6 +2,7 @@ from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin
 from config import app, db
 import datetime
+from sqlalchemy.exc import SQLAlchemyError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -96,7 +97,7 @@ def login():
                 "parent": "parent",
             }
 
-            user_type = user.user_type
+            user_type = user.user_type.lower()
             if user_type in user_type_role_map:
                 role = user_type_role_map[user_type]
                 token = create_access_token(
@@ -184,63 +185,73 @@ def handle_users():
 
 # GET ALL USERS
 
-
 @app.route('/superadmin_edit/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @jwt_required()
 def superadmin_edit(id):
-    token_data = get_jwt_identity()
-    user_email = token_data['email']
-    user = User.query.filter_by(email=user_email).first()
-    if user.user_type != 'superadmin':
-        return {"msg": "Unauthorized"}
+    try:
+        token_data = get_jwt_identity()
+        user_email = token_data['email']
+        user = User.query.filter_by(email=user_email).first()
+        if user.user_type != 'superadmin':
+            return {"msg": "Unauthorized"}
 
-    user = User.query.filter_by(id=id).first()
-    user_type = user.user_type.lower()
-    id = user.id
+        user = User.query.filter_by(id=id).first()
+        user_type = user.user_type.lower()
+        id = user.id
 
-    if request.method == 'GET':
-        if user_type == 'teacher':
-            teacher = Teacher.query.filter_by(user_id=id).first()
-            return jsonify(user=teacherSchema.dump(teacher)), 200
+        if request.method == 'GET':
+            if user_type == 'teacher':
+                teacher = Teacher.query.filter_by(user_id=id).first()
+                return jsonify(user=teacherSchema.dump(teacher)), 200
 
-        if user_type == 'admin':
-            admin = Admin.query.filter_by(user_id=id).first()
-            return jsonify(user=adminSchema.dump(admin)), 200
+            if user_type == 'admin':
+                admin = Admin.query.filter_by(user_id=id).first()
+                return jsonify(user=adminSchema.dump(admin)), 200
 
-    if request.method == 'PATCH':
-        data = request.json.items()
-        if user_type == 'teacher':
-            tr = Teacher.query.filter_by(user_id=id).first()
+        if request.method == 'PATCH':
+            data = request.json.items()
+            if user_type == 'teacher':
+                tr = Teacher.query.filter_by(user_id=id).first()
 
-            for key, value in data:
-                setattr(tr, key, value)
+                for key, value in data:
+                    setattr(tr, key, value)
 
+                db.session.commit()
+                return jsonify(user=teacherSchema.dump(tr)), 200
+
+            if user_type == 'admin':
+                admin = Admin.query.filter_by(user_id=id).first()
+
+                for key, value in data:
+                    setattr(admin, key, value)
+
+                db.session.commit()
+                return jsonify(user=adminSchema.dump(admin)), 200
+
+        if request.method == 'DELETE':
+
+            if user_type == 'teacher':
+                Teacher.query.filter_by(user_id=id).delete()
+                db.session.commit()
+
+            if user_type == 'admin':
+                Admin.query.filter_by(user_id=id).delete()
+                db.session.commit()
+
+            db.session.delete(user)
             db.session.commit()
-            return jsonify(user=teacherSchema.dump(tr)), 200
+            return jsonify({'message': 'User deleted successfully.'}), 200
 
-        if user_type == 'admin':
-            admin = Admin.query.filter_by(user_id=id).first()
+    except SQLAlchemyError as e:
+        # Handle SQLAlchemy database errors
+        db.session.rollback()
+        return jsonify({"error": "Database error occurred"}), 500
 
-            for key, value in data:
-                setattr(admin, key, value)
+    except Exception as e:
+        # Handle other unexpected errors
+        return jsonify({"error": str(e)}), 500
 
-            db.session.commit()
-            return jsonify(user=adminSchema.dump(admin)), 200
-
-    if request.method == 'DELETE':
-
-        if user_type == 'teacher':
-            Teacher.query.filter_by(user_id=id).delete()
-            db.session.commit()
-
-        if user_type == 'admin':
-            Admin.query.filter_by(user_id=id).delete()
-            db.session.commit()
-
-        db.session.delete(user)
-        db.session.commit()
-        return jsonify({'message': 'User deleted successfully.'}), 200
-
+# ADMIN FUNCTIONALITY
 
 if __name__ == "__main__":
     app.run(debug=True, port=5555)
