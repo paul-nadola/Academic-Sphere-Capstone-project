@@ -139,7 +139,7 @@ def register():
         if user.authenticate(password):
             result = userSchema.dump(user)
             access_token = create_access_token(
-                identity={"username": username, "id": user.id})
+                identity={"email": email, "id": user.id})
             return jsonify(access_token=access_token, user=result)
         return {"msg": "Wrong password"}
     return {"msg": "User does not exist"}
