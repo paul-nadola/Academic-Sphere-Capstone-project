@@ -4,7 +4,35 @@ import { Link } from 'react-router-dom';
 function Engineering() {
   return (
     <div>
-        <button className="mt-4">
+      <div className="flex justify-evenly">
+            <button className='mt-4'>
+            <Link
+              to="/departments"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+            >
+              Back To Departments
+            </Link>
+            </button>
+            
+            <button className='mt-4'>
+            <Link
+              to="/parents"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+            >
+              Parent Page
+            </Link>
+            </button>
+            
+            <button className='mt-4'>
+            <Link
+              to="/about"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+            >
+              About
+            </Link>
+            </button>
+            
+            <button className="mt-4">
             <Link
               to="/"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
@@ -12,6 +40,8 @@ function Engineering() {
               Sign Out
             </Link>
           </button>
+          </div>
+        
         <h1>Engineering Page</h1>
         <section>
         <p>Our department is not only focused on academic excellence but also on holistic development. We offer a range of extracurricular activities, clubs, and research opportunities, allowing students to apply their knowledge beyond the classroom and explore their passions.</p>
