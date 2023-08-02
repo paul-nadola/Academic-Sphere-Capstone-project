@@ -26,6 +26,12 @@ Beyond academics, we take pride in our inclusive school community, where student
               Departments
             </Link>
             <Link
+              to="/parents"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+            >
+              Parent Page
+            </Link>
+            <Link
               to="/about"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
             >
