@@ -15,12 +15,12 @@ function Departments() {
           <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
             TECHNOLOGY
           </button>
-        </Link>
+        </Link><br/>
         <Link to="/social-sciences">
           <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
             SOCIAL SCIENCES
           </button>
-        </Link>
+        </Link><br/>
         <Link to="/engineering">
           <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
             ENGINEERING

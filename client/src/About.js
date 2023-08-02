@@ -4,14 +4,19 @@ import { Link } from 'react-router-dom';
 function About() {
   return (
     <div
-      className="h-screen bg-cover bg-center flex items-center justify-center"
+      className="h-screen bg-cover bg-center flex flex-col items-start justify-start p-8"
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      <div className="bg-opacity-75 bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto">
+      <img
+        src="url"
+        alt="Prudent Group of Schools Logo"
+        className="h-16 w-16 absolute top-4 left-4"
+      />
+      <div className="bg-opacity-75 bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto mt-8">
         <h1 className="text-4xl font-bold mb-6">About Us</h1>
         <section className="text-left">
           <p>
