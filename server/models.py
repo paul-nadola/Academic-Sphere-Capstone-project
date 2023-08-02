@@ -80,6 +80,8 @@ class Student(db.Model):
         db.Integer, db.ForeignKey('departments.department_id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
     payment_id = db.Column(db.Integer, db.ForeignKey('payments.payment_id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
+
 
     units = db.relationship('Unit', secondary=student_units_table,
                             back_populates='students', cascade='all')
@@ -90,7 +92,7 @@ class Student(db.Model):
     parent_guardian = db.relationship(
         'Parent', backref='student', cascade='all')
     teacher = db.relationship(
-        'Teacher', backref='student', cascade='all')
+        'Teacher', backref='students', cascade='all')
     attendance = db.relationship(
         'StudentAttendance', backref='student', cascade='all')
 
@@ -131,7 +133,7 @@ class Teacher(db.Model):
     phone_number = db.Column(db.String(100), nullable=False)
     employment_date = db.Column(db.Date, nullable=False)
     appraisal = db.Column(db.Integer)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
+    
     department_id = db.Column(
         db.Integer, db.ForeignKey('departments.department_id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))

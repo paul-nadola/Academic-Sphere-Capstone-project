@@ -13,7 +13,12 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-        # exclude = ('password',)
+
+    # student = fields.Nested('StudentSchema', default=None)
+    # parent = fields.Nested('ParentSchema', default=None)
+    # teacher = fields.Nested('TeacherSchema', default=None)
+    # admin = fields.Nested('AdminSchema', default=None)
+    # superadmin = fields.Nested('SuperAdminSchema', default=None)
 
 
 class TeacherSchema(SQLAlchemyAutoSchema):
@@ -21,16 +26,51 @@ class TeacherSchema(SQLAlchemyAutoSchema):
         model = Teacher
         load_instance = True
 
+    user_name = fields.String(attribute='users.user_name')
+    email = fields.String(attribute='users.email')
+
+
+class SuperAdminSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = SuperAdmin
+        load_instance = True
+        
+    user_name = fields.String(attribute='users.user_name')
+    email = fields.String(attribute='users.email')
+
 
 class AdminSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Admin
         load_instance = True
+        
+    user_name = fields.String(attribute='users.user_name')
+    email = fields.String(attribute='users.email')
+
+
+class StudentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Student
+        load_instance = True
+        
+    user_name = fields.String(attribute='users.user_name')
+    email = fields.String(attribute='users.email')
+
+
+class ParentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Parent
+        load_instance = True
+        
+    user_name = fields.String(attribute='users.user_name')
+    email = fields.String(attribute='users.email')
 
 
 userSchema = UserSchema()
 teacherSchema = TeacherSchema()
 adminSchema = AdminSchema()
+studentSchema = StudentSchema()
+parentSchema = ParentSchema()
 
 
 # LOGIN ALL USERS
@@ -40,32 +80,25 @@ def login():
     email = data['email']
     password = data['password']
     user = User.query.filter_by(email=email).first()
+
     if user:
         if user.authenticate(password):
-            if user.user_type == "teacher":
-                token = create_access_token(
-                    identity={"email": user.email, "role": user.user_type})
-                return jsonify(token=token, user=userSchema.dump(user))
+            user_type_role_map = {
+                "teacher": "teacher",
+                "admin": "admin",
+                "superadmin": "superadmin",
+                "student": "student",
+                "parent": "parent",
+            }
 
-            if user.user_type == "admin":
+            user_type = user.user_type
+            if user_type in user_type_role_map:
+                role = user_type_role_map[user_type]
                 token = create_access_token(
-                    identity={"email": user.email, "role": user.user_type})
+                    identity={"email": user.email, "role": role})
                 return jsonify(token=token, user=userSchema.dump(user))
+            return {"msg": "Wrong user_type"}
 
-            if user.user_type == "superadmin":
-                token = create_access_token(
-                    identity={"email": user.email, "role": user.user_type})
-                return jsonify(token=token, user=userSchema.dump(user))
-
-            if user.user_type == "student":
-                token = create_access_token(
-                    identity={"email": user.email, "role": user.user_type})
-                return jsonify(token=token, user=userSchema.dump(user))
-
-            if user.user_type == "parent":
-                token = create_access_token(
-                    identity={"email": user.email, "role": user.user_type})
-                return jsonify(token=token, user=userSchema.dump(user))
         return {"msg": "Wrong password"}
 
     return {"msg": "User does not exist"}
@@ -86,7 +119,7 @@ def session():
 
 
 # GET ALL USERS
-@app.route('/superadmin', methods=['GET', 'POST'])
+@app.route('/superadmin_create', methods=['GET', 'POST'])
 @jwt_required()
 def handle_users():
     token_data = get_jwt_identity()
@@ -97,8 +130,8 @@ def handle_users():
 
     if request.method == 'GET':
         teachers = Teacher.query.all()
-        admins = Admin.query.all()
-        return jsonify(admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
+        admins = User.query.filter_by(user_type="admin").all()
+        return jsonify(admins=userSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
         data = request.get_json()
@@ -108,15 +141,25 @@ def handle_users():
         password = data['password']
         user_type = data['user_type']
 
-        user = User(user_name=user_name, email=email,
-                    password_hash=password, user_type=user_type)
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user = user
+        else:
+            user = User(user_name=user_name, email=email,
+                        password_hash=password, user_type=user_type)
 
         db.session.add(user)
         db.session.commit()
 
         if user_type == 'Admin':
-            obj = {'first_name': data['first_name'], 'last_name': data['last_name'], 'DOB': data['DOB'], 'address': data['address'],
-                   'phone_number': data['phone_number'], 'employment_date': data['employment_date'], 'appraisal': data['appraisal']}
+            obj = {'first_name': data['first_name'],
+                   'user_id': user.id,
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'employment_date': data['employment_date'],
+                   'appraisal': data['appraisal']}
 
             admin = Admin(**obj)
 
@@ -125,24 +168,22 @@ def handle_users():
 
             return jsonify(user=adminSchema.dump(admin))
 
+        if user_type == 'Teacher':
+            obj = {'first_name': data['first_name'],
+                   'user_id': user.id,
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'employment_date': data['employment_date'],
+                   'appraisal': data['appraisal']}
 
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    role = data['role']
+            teacher = Teacher(**obj)
 
-    email = data['email']
-    password = data['password']
-    user_type = data['user_type']
-    user = User
-    if user:
-        if user.authenticate(password):
-            result = userSchema.dump(user)
-            access_token = create_access_token(
-                identity={"username": username, "id": user.id})
-            return jsonify(access_token=access_token, user=result)
-        return {"msg": "Wrong password"}
-    return {"msg": "User does not exist"}
+            db.session.add(teacher)
+            db.session.commit()
+
+            return jsonify(user=teacherSchema.dump(teacher))
 
 
 if __name__ == "__main__":
