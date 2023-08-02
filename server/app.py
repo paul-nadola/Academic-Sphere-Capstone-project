@@ -28,6 +28,7 @@ class TeacherSchema(SQLAlchemyAutoSchema):
 
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
+    user_id = fields.String(attribute='users.id')
 
 
 class SuperAdminSchema(SQLAlchemyAutoSchema):
@@ -37,6 +38,7 @@ class SuperAdminSchema(SQLAlchemyAutoSchema):
 
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
+    user_id = fields.String(attribute='users.id')
 
 
 class AdminSchema(SQLAlchemyAutoSchema):
@@ -46,6 +48,7 @@ class AdminSchema(SQLAlchemyAutoSchema):
 
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
+    user_id = fields.String(attribute='users.id')
 
 
 class StudentSchema(SQLAlchemyAutoSchema):
@@ -55,6 +58,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
 
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
+    user_id = fields.String(attribute='users.id')
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -64,6 +68,7 @@ class ParentSchema(SQLAlchemyAutoSchema):
 
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
+    user_id = fields.String(attribute='users.id')
 
 
 userSchema = UserSchema()
@@ -131,6 +136,7 @@ def handle_users():
     if request.method == 'GET':
         teachers = Teacher.query.all()
         admins = Admin.query.all()
+
         return jsonify(admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
@@ -139,7 +145,7 @@ def handle_users():
         user_name = data['user_name']
         email = data['email']
         password = data['password']
-        user_type = data['user_type']
+        user_type = data['user_type'].lower()
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -160,7 +166,7 @@ def handle_users():
                'employment_date': data['employment_date'],
                'appraisal': data['appraisal']}
 
-        if user_type == 'Admin':
+        if user_type == 'admin':
             admin = Admin(**obj)
 
             db.session.add(admin)
@@ -168,13 +174,72 @@ def handle_users():
 
             return jsonify(user=adminSchema.dump(admin))
 
-        if user_type == 'Teacher':
+        if user_type == 'teacher':
             teacher = Teacher(**obj)
 
             db.session.add(teacher)
             db.session.commit()
 
             return jsonify(user=teacherSchema.dump(teacher))
+
+# GET ALL USERS
+
+
+@app.route('/superadmin_edit/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@jwt_required()
+def superadmin_edit(id):
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type != 'superadmin':
+        return {"msg": "Unauthorized"}
+
+    user = User.query.filter_by(id=id).first()
+    user_type = user.user_type.lower()
+    id = user.id
+
+    if request.method == 'GET':
+        if user_type == 'teacher':
+            teacher = Teacher.query.filter_by(user_id=id).first()
+            return jsonify(user=teacherSchema.dump(teacher)), 200
+
+        if user_type == 'admin':
+            admin = Admin.query.filter_by(user_id=id).first()
+            return jsonify(user=adminSchema.dump(admin)), 200
+
+    if request.method == 'PATCH':
+        data = request.json.items()
+        if user_type == 'teacher':
+            tr = Teacher.query.filter_by(user_id=id).first()
+
+            for key, value in data:
+                setattr(tr, key, value)
+
+            db.session.commit()
+            return jsonify(user=teacherSchema.dump(tr)), 200
+
+        if user_type == 'admin':
+            admin = Admin.query.filter_by(user_id=id).first()
+
+            for key, value in data:
+                setattr(admin, key, value)
+
+            db.session.commit()
+            return jsonify(user=adminSchema.dump(admin)), 200
+
+    if request.method == 'DELETE':
+
+        if user_type == 'teacher':
+            Teacher.query.filter_by(user_id=id).delete()
+            db.session.commit()
+
+        if user_type == 'admin':
+            Admin.query.filter_by(user_id=id).delete()
+            db.session.commit()
+
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'message': 'User deleted successfully.'}), 200
 
 
 if __name__ == "__main__":

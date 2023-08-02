@@ -106,7 +106,7 @@ class Teacher(db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
-    last_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, unique=True ,nullable=False)
     DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
