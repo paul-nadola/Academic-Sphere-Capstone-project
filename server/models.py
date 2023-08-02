@@ -72,10 +72,10 @@ class Student(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.String(100), nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    enrollment_date = db.Column(db.String(100), nullable=False)
+    enrollment_date = db.Column(db.Date, nullable=False)
     department_id = db.Column(
         db.Integer, db.ForeignKey('departments.department_id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
@@ -106,7 +106,7 @@ class Parent(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.String(100), nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
@@ -126,10 +126,10 @@ class Teacher(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.String(100), nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    employment_date = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
     appraisal = db.Column(db.Integer)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
     department_id = db.Column(
@@ -155,10 +155,10 @@ class Admin(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.String(100), nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    employment_date = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
     appraisal = db.Column(db.Integer)
 
     def __repr__(self):
@@ -289,7 +289,7 @@ class TeacherAttendance(db.Model):
     __tablename__ = 'teacher_attendance'
 
     attendance_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
     attendance = db.Column(db.String(20))
 
@@ -302,7 +302,7 @@ class StudentAttendance(db.Model):
     __tablename__ = 'student_attendance'
 
     attendance_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
     attendance = db.Column(db.String(20))
 
@@ -315,10 +315,10 @@ class LeaveOfAbsence(db.Model):
     __tablename__ = 'leave_of_absence'
 
     leave_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
-    start = db.Column(db.DateTime)
-    end = db.Column(db.DateTime)
+    start = db.Column(db.Date)
+    end = db.Column(db.Date)
     status = db.Column(db.String(25))
 
     def __repr__(self):
