@@ -9,6 +9,8 @@ import About from './About';
 import SignIn from './SignIn';
 import ParentsPage from './ParentsPage';
 import StudentsPage from './StudentsPage';
+import Teacher from './Teacher';
+import StudentInfo from './StudentInfo';
 
 function App() {
   return (
@@ -19,11 +21,13 @@ function App() {
           <Route path="/departments" element={<Departments />} />
           <Route path="/about" element={<About />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/teachers" element={<Teacher/>}  />
           <Route path="/technology" element={<Technology />} />
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
           <Route path="/parents" element={<ParentsPage />} />
           <Route path="/students" element={<StudentsPage />} />
+          <Route path="/studentinfo" element={<StudentInfo />} />          
         </Routes>
       </div>
     </Router>
