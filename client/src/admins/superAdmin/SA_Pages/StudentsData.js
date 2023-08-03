@@ -8,6 +8,7 @@ import { AiOutlineUserAdd } from 'react-icons/ai';
 function StudentsData() {
   return (
     <div>
+        <div className='flex justify-around gap-10'>
         <button className='mt-4'>
             <Link
               to="/superadmin"
@@ -26,6 +27,7 @@ function StudentsData() {
               Sign Out
             </Link>
           </button>
+        </div>
             <h1 className='text-xl font-bold'>Students Data Page</h1>
             <div class="w-82 mt-4 ml-4 mr-3">
             <table class="w-full table-auto bg-gray-400">
