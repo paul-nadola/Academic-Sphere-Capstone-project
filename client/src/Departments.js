@@ -52,7 +52,8 @@ function Departments() {
         We have three major departments at our school, which cater for the different courses offered. Take a tour around!
       </p>
       
-      <button className="mt-4">
+      <div className="h-70vh w-90vw flex flex-col items-start justify-end">
+          <button className="mt-4">
             <Link
               to="/technology"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
@@ -60,6 +61,8 @@ function Departments() {
               TECHNOLOGY
             </Link>
           </button>
+        </div>
+        <div className="h-70vh w-90vw flex flex-col items-center justify-center">
           <button className="mt-4">
             <Link
               to="/social-sciences"
@@ -68,7 +71,9 @@ function Departments() {
               SOCIAL SCIENCES
             </Link>
           </button>
-         <button className="mt-4">
+        </div>
+        <div className="h-70vh w-90vw flex flex-col items-end justify-start">
+          <button className="mt-4">
             <Link
               to="/engineering"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
@@ -76,6 +81,7 @@ function Departments() {
               ENGINEERING
             </Link>
           </button>
+        </div>
       </div>
       
     </div>
