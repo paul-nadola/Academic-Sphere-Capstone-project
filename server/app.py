@@ -333,6 +333,80 @@ def admin_create():
                            tr_attendance, many=True),
                        leave=leaveOfAbsenceSchema.dump(leave, many=True)
                        )
+    if request.method == 'POST':
+        data = request.get_json()
+
+        user_name = data['user_name']
+        email = data['email']
+        password = data['password']
+        user_type = data['user_type'].lower()
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user = user
+        else:
+            user = User(user_name=user_name, email=email,
+                        password_hash=password, user_type=user_type)
+
+        db.session.add(user)
+        db.session.commit()
+
+        if user_type == 'teacher':
+            obj = {'first_name': data['first_name'],
+                   'user_id': user.id,
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'employment_date': data['employment_date'],
+                   'appraisal': data['appraisal']}
+
+            teacher = Teacher(**obj)
+
+            db.session.add(teacher)
+            db.session.commit()
+
+            return jsonify(user=teacherSchema.dump(teacher))
+
+        if user_type == 'student':
+            obj = {'user_id': user.id,
+                   'first_name': data['first_name'],
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'enrollment_date': data['enrollment_date'],
+                   'department_id': data['department_id'],
+                   'course_id': data['course_id'],
+                   'teacher_id': data['teacher_id']
+                   }
+
+            std = Student(**obj)
+
+            db.session.add(std)
+            db.session.commit()
+
+            return jsonify(std=studentSchema.dump(std))
+        
+        if user_type == 'student':
+            obj = {'user_id': user.id,
+                   'first_name': data['first_name'],
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'enrollment_date': data['enrollment_date'],
+                   'department_id': data['department_id'],
+                   'course_id': data['course_id'],
+                   'teacher_id': data['teacher_id']
+                   }
+
+            std = Student(**obj)
+
+            db.session.add(std)
+            db.session.commit()
+
+            return jsonify(std=studentSchema.dump(std))
 
 
 if __name__ == "__main__":
