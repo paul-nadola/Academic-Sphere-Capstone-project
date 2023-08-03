@@ -8,6 +8,7 @@ import Engineering from './Engineering';
 import About from './About';
 import SignIn from './SignIn';
 import ParentsPage from './ParentsPage';
+import StudentsPage from './StudentsPage';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
           <Route path="/parents" element={<ParentsPage />} />
-          {/* <Route path="/teachers" element={<TeacherPage/>} /> */}
+          <Route path="/students" element={<StudentsPage />} />
         </Routes>
       </div>
     </Router>
