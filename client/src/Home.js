@@ -27,8 +27,11 @@ function Home() {
               to="/departments"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
             >
+              
               Departments
             </Link>
+            </button>
+            <button>
             <Link
               to="/parents"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
@@ -45,6 +48,15 @@ function Home() {
               Student Page
             </Link>
             </button>
+
+            <button className='mt-4'>
+            <Link
+              to="/superadmin"
+              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+            >
+              SuperAdmin Page
+            </Link>
+            </button>
             
             <button className='mt-4'>
             <Link
@@ -54,6 +66,9 @@ function Home() {
               About
             </Link>
             </button>
+            <button className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center">
+              <Link to="/signin">Sign In</Link>
+            </button>
           </div>
           <h1 className="text-6xl font-bold text-navy mb-8">Welcome to Prudent<br/> Group Of Schools</h1>
           <p className="text-xl mb-3">At Prudent Group of Schools, we believe that education is not merely about acquiring knowledge; it is a journey of nurturing young minds, fostering creativity, and building a strong foundation for a successful future. With a legacy of excellence in education, our institution has been empowering students to realize their full potential and become responsible global citizens.
@@ -61,9 +76,7 @@ function Home() {
             With state-of-the-art facilities and innovative teaching methodologies, we strive to create a student-centric atmosphere that fosters curiosity and creativity. Our comprehensive curriculum is designed to cater to the diverse learning needs of our students, ensuring that they excel academically and develop essential life skills.
             Beyond academics, we take pride in our inclusive school community, where students from various backgrounds come together to learn, collaborate, and grow. Our emphasis on values, respect, and empathy nurtures a culture of mutual understanding and appreciation.</p>
           <div className="mt-4">
-            <button className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center">
-              <Link to="/signin">Sign In</Link>
-            </button>
+            
             
           </div>
           <div className='items-center justify-center'>
