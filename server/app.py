@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from models import User, Parent, Teacher, Student, Admin, SuperAdmin
+from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db
 import datetime
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -71,11 +71,74 @@ class ParentSchema(SQLAlchemyAutoSchema):
     user_id = fields.String(attribute='users.id')
 
 
+class DepartmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Department
+        load_instance = True
+
+
+class CourseSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Course
+        load_instance = True
+
+
+class UnitSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Unit
+        load_instance = True
+
+
+class AssessmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Assessment
+        load_instance = True
+
+
+class GradeSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Grade
+        load_instance = True
+
+
+class PaymentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Payment
+        load_instance = True
+
+
+class TeacherAttendanceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = TeacherAttendance
+        load_instance = True
+
+
+class StudentAttendanceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = StudentAttendance
+        load_instance = True
+
+
+class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LeaveOfAbsence
+        load_instance = True
+
+
 userSchema = UserSchema()
 teacherSchema = TeacherSchema()
 adminSchema = AdminSchema()
 studentSchema = StudentSchema()
 parentSchema = ParentSchema()
+departmentSchema = DepartmentSchema()
+courseSchema = CourseSchema()
+unitSchema = UnitSchema()
+assessmentSchema = AssessmentSchema()
+gradeSchema = GradeSchema()
+paymentSchema = PaymentSchema()
+teacherAttendanceSchema = TeacherAttendanceSchema()
+studentAttendanceSchema = StudentAttendanceSchema()
+leaveOfAbsenceSchema = LeaveOfAbsenceSchema()
 
 
 # LOGIN ALL USERS
@@ -240,6 +303,36 @@ def superadmin_edit(id):
         db.session.delete(user)
         db.session.commit()
         return jsonify({'message': 'User deleted successfully.'}), 200
+
+
+# ADMIN FUNCTIONALITY
+
+@app.route('/admin_create', methods=['GET', 'POST'])
+@jwt_required()
+def admin_create():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        teachers = Teacher.query.all()
+        students = Student.query.all()
+        parents = Parent.query.all()
+        departments = Department.query.all()
+        tr_attendance = TeacherAttendance.query.all()
+        leave = LeaveOfAbsence.query.all()
+
+        return jsonify(teachers=teacherSchema.dump(teachers, many=True),
+                       students=studentSchema.dump(students, many=True),
+                       parents=parentSchema.dump(parents, many=True),
+                       departments=departmentSchema.dump(
+                           departments, many=True),
+                       tr_attendance=teacherAttendanceSchema.dump(
+                           tr_attendance, many=True),
+                       leave=leaveOfAbsenceSchema.dump(leave, many=True)
+                       )
 
 
 if __name__ == "__main__":
