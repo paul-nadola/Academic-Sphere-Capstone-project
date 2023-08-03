@@ -59,6 +59,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    parent = fields.Nested("ParentSchema", exclude=("student",))
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -69,6 +70,8 @@ class ParentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    student = fields.Nested(StudentSchema, only=(
+        "student_id", "first_name", "last_name", "user_name",))
 
 
 class DepartmentSchema(SQLAlchemyAutoSchema):
@@ -76,11 +79,16 @@ class DepartmentSchema(SQLAlchemyAutoSchema):
         model = Department
         load_instance = True
 
+    course = fields.Nested("CourseSchema", only=("course_name",))
+    teacher = fields.Nested("TeacherSchema", only=("first_name", "last_name",))
+
 
 class CourseSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Course
         load_instance = True
+
+    department = fields.Nested("DepartmentSchema", only=("department_name",))
 
 
 class UnitSchema(SQLAlchemyAutoSchema):
@@ -308,13 +316,13 @@ def superadmin_edit(id):
 # ADMIN FUNCTIONALITY
 
 @app.route('/admin_create', methods=['GET', 'POST'])
-@jwt_required()
+# @jwt_required()
 def admin_create():
-    token_data = get_jwt_identity()
-    user_email = token_data['email']
-    user = User.query.filter_by(email=user_email).first()
-    if user.user_type.lower() != 'admin':
-        return {"msg": "Unauthorized"}
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'admin':
+    #     return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         teachers = Teacher.query.all()
@@ -387,26 +395,79 @@ def admin_create():
             db.session.commit()
 
             return jsonify(std=studentSchema.dump(std))
-        
-        if user_type == 'student':
+
+        if user_type == 'parent':
             obj = {'user_id': user.id,
                    'first_name': data['first_name'],
                    'last_name': data['last_name'],
-                   'DOB': data['DOB'],
                    'address': data['address'],
                    'phone_number': data['phone_number'],
-                   'enrollment_date': data['enrollment_date'],
-                   'department_id': data['department_id'],
-                   'course_id': data['course_id'],
-                   'teacher_id': data['teacher_id']
+                   'student_id': data['student_id']
                    }
 
-            std = Student(**obj)
+            parent = Parent(**obj)
 
-            db.session.add(std)
+            db.session.add(parent)
             db.session.commit()
 
-            return jsonify(std=studentSchema.dump(std))
+            return jsonify(parent=parentSchema.dump(parent))
+
+
+@app.route('/admin_create_two/<string:name>', methods=['GET', 'POST'])
+# @jwt_required()
+def admin_create_two(name):
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'admin':
+    #     return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        departments = Department.query.all()
+        courses = Course.query.all()
+        units = Unit.query.all()
+
+        return jsonify(departments=departmentSchema.dump(departments, many=True),
+                       courses=courseSchema.dump(courses, many=True),
+                       units=unitSchema.dump(units, many=True)
+                       )
+
+    data = request.get_json()
+    if request.method == 'POST':
+        if name.lower() == 'department':
+            dep = Department(**data)
+
+            db.session.add(dep)
+            db.session.commit()
+
+            return jsonify(department=departmentSchema.dump(dep))
+
+        if name.lower() == 'course':
+            course = Course(**data)
+
+            db.session.add(course)
+            db.session.commit()
+
+            return jsonify(course=courseSchema.dump(course))
+
+        if name.lower() == 'unit':
+            unit = Unit(**data)
+
+            db.session.add(unit)
+            db.session.commit()
+
+            return jsonify(unit=UnitSchema.dump(unit))
+
+        if name.lower() == 'teacherattendance':
+            attendance = TeacherAttendance(**data)
+
+            db.session.add(attendance)
+            db.session.commit()
+
+            return jsonify(attendance=teacherAttendanceSchema.dump(attendance))
+
+        if name.lower() == 'leave':
+            pass
 
 
 if __name__ == "__main__":
