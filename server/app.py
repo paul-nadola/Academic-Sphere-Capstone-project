@@ -379,7 +379,7 @@ def admin_create():
                    'enrollment_date': data['enrollment_date'],
                    'department_id': data['department_id'],
                    'course_id': data['course_id'],
-                   'teacher_id': data['teacher_id']
+                   'payment_id': data['payment_id']
                    }
 
             std = Student(**obj)
