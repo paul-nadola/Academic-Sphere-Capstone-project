@@ -22,7 +22,7 @@ function Home() {
         <div>
           <div className="flex justify-evenly">
             {/* ... (buttons and links) ... */}
-            <button className='mt-4'>
+            <button className='mt-4 flex items-center'>
             <Link
               to="/departments"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
@@ -31,7 +31,7 @@ function Home() {
               Departments
             </Link>
             </button>
-            <button>
+            <button className='flex items-center'>
             <Link
               to="/parents"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
@@ -40,16 +40,16 @@ function Home() {
             </Link>
             </button>
 
-            <button className='mt-4'>
+            <button className='mt-4 flex items-center'>
             <Link
               to="/students"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
             >
               Student Page
             </Link>
             </button>
 
-            <button className='mt-4'>
+            <button className='mt-4 flex items-center'>
             <Link
               to="/superadmin"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
@@ -58,7 +58,7 @@ function Home() {
             </Link>
             </button>
             
-            <button className='mt-4'>
+            <button className='mt-4 flex items-center'>
             <Link
               to="/about"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
@@ -66,11 +66,16 @@ function Home() {
               About
             </Link>
             </button>
-            <button className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center">
-              <Link to="/signin">Sign In</Link>
-            </button>
+            <button className="mt-4 mb-2 flex items-center">
+            <Link
+              to="/signin"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+            >
+              Sign In
+            </Link>
+          </button>
           </div>
-          <h1 className="text-6xl font-bold text-navy mb-8">Welcome to Prudent<br/> Group Of Schools</h1>
+          <h1 className="text-6xl font-bold text-navy mb-8 mt-10">Welcome to Prudent<br/> Group Of Schools</h1>
           <p className="text-xl mb-3">At Prudent Group of Schools, we believe that education is not merely about acquiring knowledge; it is a journey of nurturing young minds, fostering creativity, and building a strong foundation for a successful future. With a legacy of excellence in education, our institution has been empowering students to realize their full potential and become responsible global citizens.
             Our dedicated team of educators is committed to providing a nurturing and stimulating learning environment that encourages curiosity, critical thinking, and a passion for lifelong learning. We believe in a holistic approach to education, encompassing academics, arts, sports, and character development, to shape well-rounded individuals capable of facing the challenges of the ever-changing world.
             With state-of-the-art facilities and innovative teaching methodologies, we strive to create a student-centric atmosphere that fosters curiosity and creativity. Our comprehensive curriculum is designed to cater to the diverse learning needs of our students, ensuring that they excel academically and develop essential life skills.
