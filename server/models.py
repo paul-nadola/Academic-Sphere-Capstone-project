@@ -64,6 +64,70 @@ student_grade_table = db.Table('student_grade',
                                )
 
 
+class SuperAdmin(db.Model):
+
+    __tablename__ = 'superadmins'
+
+    super_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return f'<Admin {self.last_name} | ID: {self.super_id}>'
+
+
+class Admin(db.Model):
+
+    __tablename__ = 'admins'
+
+    admin_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
+    appraisal = db.Column(db.Integer)
+
+    def __repr__(self):
+        return f'<Admin {self.last_name} | ID: {self.admin_id}>'
+
+
+class Teacher(db.Model):
+
+    __tablename__ = 'teachers'
+
+    teacher_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    first_name = db.Column(db.String(255), index=True, nullable=False)
+    last_name = db.Column(db.String(255), index=True, unique=True ,nullable=False)
+    DOB = db.Column(db.Date, nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    phone_number = db.Column(db.String(100), nullable=False)
+    employment_date = db.Column(db.Date, nullable=False)
+    appraisal = db.Column(db.Integer)
+
+    department_id = db.Column(
+        db.Integer, db.ForeignKey('departments.department_id'))
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
+
+    attendance = db.relationship(
+        'TeacherAttendance', backref='teacher', cascade='all')
+    leave = db.relationship(
+        'LeaveOfAbsence', backref='teacher', cascade='all')
+    response = db.relationship(
+        'Response', backref='teacher', cascade='all')
+
+    def __repr__(self):
+        return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
+
+
 class Student(db.Model):
 
     __tablename__ = 'students'
@@ -80,17 +144,18 @@ class Student(db.Model):
         db.Integer, db.ForeignKey('departments.department_id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
     payment_id = db.Column(db.Integer, db.ForeignKey('payments.payment_id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
 
     units = db.relationship('Unit', secondary=student_units_table,
                             back_populates='students', cascade='all')
     assessments = db.relationship('Assessment', secondary=student_assessment_table,
-                                 back_populates='students', cascade='all')
+                                  back_populates='students', cascade='all')
     grades = db.relationship('Grade', secondary=student_grade_table,
-                            back_populates='students', cascade='all')
+                             back_populates='students', cascade='all')
     parent_guardian = db.relationship(
         'Parent', backref='student', cascade='all')
     teacher = db.relationship(
-        'Teacher', backref='student', cascade='all')
+        'Teacher', backref='students', cascade='all')
     attendance = db.relationship(
         'StudentAttendance', backref='student', cascade='all')
 
@@ -116,70 +181,6 @@ class Parent(db.Model):
 
     def __repr__(self):
         return f'<Parent {self.last_name} | ID: {self.parent_id}>'
-
-
-class Teacher(db.Model):
-
-    __tablename__ = 'teachers'
-
-    teacher_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    first_name = db.Column(db.String(255), index=True, nullable=False)
-    last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-    phone_number = db.Column(db.String(100), nullable=False)
-    employment_date = db.Column(db.Date, nullable=False)
-    appraisal = db.Column(db.Integer)
-    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
-    department_id = db.Column(
-        db.Integer, db.ForeignKey('departments.department_id'))
-    course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
-
-    attendance = db.relationship(
-        'TeacherAttendance', backref='teacher', cascade='all')
-    leave = db.relationship(
-        'LeaveOfAbsence', backref='teacher', cascade='all')
-    response = db.relationship(
-        'Response', backref='teacher', cascade='all')
-
-    def __repr__(self):
-        return f'<Teacher {self.last_name} | ID: {self.teacher_id}>'
-
-
-class Admin(db.Model):
-
-    __tablename__ = 'admins'
-
-    admin_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    first_name = db.Column(db.String(255), index=True, nullable=False)
-    last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-    phone_number = db.Column(db.String(100), nullable=False)
-    employment_date = db.Column(db.Date, nullable=False)
-    appraisal = db.Column(db.Integer)
-
-    def __repr__(self):
-        return f'<Admin {self.last_name} | ID: {self.admin_id}>'
-
-
-class SuperAdmin(db.Model):
-
-    __tablename__ = 'superadmins'
-
-    super_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    first_name = db.Column(db.String(255), index=True, nullable=False)
-    last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
-    address = db.Column(db.String(255), nullable=False)
-    phone_number = db.Column(db.String(100), nullable=False)
-    employment_date = db.Column(db.Date, nullable=False)
-
-    def __repr__(self):
-        return f'<Admin {self.last_name} | ID: {self.super_id}>'
 
 
 class Department(db.Model):
