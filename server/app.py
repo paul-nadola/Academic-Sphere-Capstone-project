@@ -79,8 +79,9 @@ class DepartmentSchema(SQLAlchemyAutoSchema):
         model = Department
         load_instance = True
 
-    course = fields.Nested("CourseSchema", only=("course_name",))
-    teacher = fields.Nested("TeacherSchema", only=("first_name", "last_name",))
+    courses = fields.Nested("CourseSchema")
+    teachers = fields.Nested(
+        "TeacherSchema", only=("first_name", "last_name",))
 
 
 class CourseSchema(SQLAlchemyAutoSchema):
@@ -88,13 +89,15 @@ class CourseSchema(SQLAlchemyAutoSchema):
         model = Course
         load_instance = True
 
-    department = fields.Nested("DepartmentSchema", only=("department_name",))
+    department = fields.Nested(DepartmentSchema, only=("department_name",))
+    units = fields.Nested("UnitSchema", only=("unit_name",))
 
 
 class UnitSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         load_instance = True
+    course = fields.Nested("CourseSchema", only=("course_name",))
 
 
 class AssessmentSchema(SQLAlchemyAutoSchema):
@@ -119,6 +122,7 @@ class TeacherAttendanceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = TeacherAttendance
         load_instance = True
+    teacher = fields.Nested(TeacherSchema, only=("first_name", "user_name",))
 
 
 class StudentAttendanceSchema(SQLAlchemyAutoSchema):
@@ -426,10 +430,13 @@ def admin_create_two(name):
         departments = Department.query.all()
         courses = Course.query.all()
         units = Unit.query.all()
+        attendance = TeacherAttendance.query.all()
 
         return jsonify(departments=departmentSchema.dump(departments, many=True),
                        courses=courseSchema.dump(courses, many=True),
-                       units=unitSchema.dump(units, many=True)
+                       units=unitSchema.dump(units, many=True),
+                       tr_attendance=teacherAttendanceSchema.dump(
+                           attendance, many=True)
                        )
 
     data = request.get_json()
@@ -456,15 +463,16 @@ def admin_create_two(name):
             db.session.add(unit)
             db.session.commit()
 
-            return jsonify(unit=UnitSchema.dump(unit))
+            return jsonify(unit=unitSchema.dump(unit))
 
         if name.lower() == 'teacherattendance':
-            attendance = TeacherAttendance(**data)
+            for datum in data:
+                attendance = TeacherAttendance(**datum)
 
-            db.session.add(attendance)
-            db.session.commit()
+                db.session.add(attendance)
+                db.session.commit()
 
-            return jsonify(attendance=teacherAttendanceSchema.dump(attendance))
+            return {"msg": "Attendance marked"}, 200
 
         if name.lower() == 'leave':
             pass
