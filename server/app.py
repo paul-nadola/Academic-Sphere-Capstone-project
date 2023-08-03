@@ -389,25 +389,25 @@ def admin_create():
 
             return jsonify(std=studentSchema.dump(std))
         
-        if user_type == 'student':
-            obj = {'user_id': user.id,
-                   'first_name': data['first_name'],
-                   'last_name': data['last_name'],
-                   'DOB': data['DOB'],
-                   'address': data['address'],
-                   'phone_number': data['phone_number'],
-                   'enrollment_date': data['enrollment_date'],
-                   'department_id': data['department_id'],
-                   'course_id': data['course_id'],
-                   'teacher_id': data['teacher_id']
-                   }
+        # if user_type == 'student':
+        #     obj = {'user_id': user.id,
+        #            'first_name': data['first_name'],
+        #            'last_name': data['last_name'],
+        #            'DOB': data['DOB'],
+        #            'address': data['address'],
+        #            'phone_number': data['phone_number'],
+        #            'enrollment_date': data['enrollment_date'],
+        #            'department_id': data['department_id'],
+        #            'course_id': data['course_id'],
+        #            'teacher_id': data['teacher_id']
+        #            }
 
-            std = Student(**obj)
+        #     std = Student(**obj)
 
-            db.session.add(std)
-            db.session.commit()
+        #     db.session.add(std)
+        #     db.session.commit()
 
-            return jsonify(std=studentSchema.dump(std))
+        #     return jsonify(std=studentSchema.dump(std))
 
 
 if __name__ == "__main__":
