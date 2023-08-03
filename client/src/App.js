@@ -6,7 +6,7 @@ import Technology from './departments/Technology';
 import SocialSciences from './departments/SocialSciences';
 import Engineering from './departments/Engineering';
 import About from './generalPages/AboutPage';
-import SignIn from './SignIn';
+import SignIn from './generalPages/SignIn';
 import ParentsPage from './parents/ParentsHomePage';
 import StudentsPage from './students/StudentsHomePage';
 import SuperAdmin from './admins/superAdmin/SuperAdminHome';
