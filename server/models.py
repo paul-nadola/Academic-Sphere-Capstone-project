@@ -152,10 +152,10 @@ class Student(db.Model):
                                   back_populates='students', cascade='all')
     grades = db.relationship('Grade', secondary=student_grade_table,
                              back_populates='students', cascade='all')
-    parent_guardian = db.relationship(
-        'Parent', backref='student', cascade='all')
+    parent = db.relationship(
+        'Parent', back_populates='student', uselist=False, single_parent=True)
     teacher = db.relationship(
-        'Teacher', backref='students', cascade='all')
+        'Teacher', backref='student', cascade='all')
     attendance = db.relationship(
         'StudentAttendance', backref='student', cascade='all')
 
@@ -171,10 +171,12 @@ class Parent(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
+    
+    student = db.relationship(
+        'Student', back_populates='parent', uselist=False, single_parent=True)
 
     enquiry = db.relationship(
         'Enquiry', backref='parent', cascade='all')
@@ -188,7 +190,7 @@ class Department(db.Model):
     __tablename__ = 'departments'
 
     department_id = db.Column(db.Integer, primary_key=True)
-    department_name = db.Column(db.String(255), nullable=False)
+    department_name = db.Column(db.String(255), unique=True,nullable=False)
     hod_name = db.Column(db.String(255), nullable=False)
 
     teachers = db.relationship(
