@@ -72,7 +72,7 @@ function ParentsPage() {
         <h4><b>Fee Paid:</b> 54000</h4>
       </div>
       <div className="p-4 border bg-purple-800 col-span-2">
-        <h1>Enquiry Section</h1>
+        <h1>Inquiries</h1>
       </div>
       <div className="p-4 border bg-pink-800">
         <h1>NEWS AND UPDATES</h1>
@@ -88,4 +88,4 @@ function ParentsPage() {
   )
 }
 
-export default ParentsPage
+export default ParentsPage;
