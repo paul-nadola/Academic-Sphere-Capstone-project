@@ -1,8 +1,7 @@
 from flask import jsonify, request
-from models import User, Parent, Teacher, Student, Admin, SuperAdmin
+from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db
 import datetime
-from sqlalchemy.exc import SQLAlchemyError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -60,6 +59,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    parent = fields.Nested("ParentSchema", exclude=("student",))
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -70,6 +70,67 @@ class ParentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    student = fields.Nested(StudentSchema, only=(
+        "student_id", "first_name", "last_name", "user_name",))
+
+
+class DepartmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Department
+        load_instance = True
+
+    course = fields.Nested("CourseSchema", only=("course_name",))
+    teacher = fields.Nested("TeacherSchema", only=("first_name", "last_name",))
+
+
+class CourseSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Course
+        load_instance = True
+
+    department = fields.Nested("DepartmentSchema", only=("department_name",))
+
+
+class UnitSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Unit
+        load_instance = True
+
+
+class AssessmentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Assessment
+        load_instance = True
+
+
+class GradeSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Grade
+        load_instance = True
+
+
+class PaymentSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Payment
+        load_instance = True
+
+
+class TeacherAttendanceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = TeacherAttendance
+        load_instance = True
+
+
+class StudentAttendanceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = StudentAttendance
+        load_instance = True
+
+
+class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = LeaveOfAbsence
+        load_instance = True
 
 
 userSchema = UserSchema()
@@ -77,6 +138,15 @@ teacherSchema = TeacherSchema()
 adminSchema = AdminSchema()
 studentSchema = StudentSchema()
 parentSchema = ParentSchema()
+departmentSchema = DepartmentSchema()
+courseSchema = CourseSchema()
+unitSchema = UnitSchema()
+assessmentSchema = AssessmentSchema()
+gradeSchema = GradeSchema()
+paymentSchema = PaymentSchema()
+teacherAttendanceSchema = TeacherAttendanceSchema()
+studentAttendanceSchema = StudentAttendanceSchema()
+leaveOfAbsenceSchema = LeaveOfAbsenceSchema()
 
 
 # LOGIN ALL USERS
@@ -97,7 +167,7 @@ def login():
                 "parent": "parent",
             }
 
-            user_type = user.user_type.lower()
+            user_type = user.user_type
             if user_type in user_type_role_map:
                 role = user_type_role_map[user_type]
                 token = create_access_token(
@@ -185,90 +255,219 @@ def handle_users():
 
 # GET ALL USERS
 
+
 @app.route('/superadmin_edit/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @jwt_required()
 def superadmin_edit(id):
-    try:
-        token_data = get_jwt_identity()
-        user_email = token_data['email']
-        user = User.query.filter_by(email=user_email).first()
-        if user.user_type != 'superadmin':
-            return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type != 'superadmin':
+        return {"msg": "Unauthorized"}
 
-        user = User.query.filter_by(id=id).first()
-        user_type = user.user_type.lower()
-        id = user.id
+    user = User.query.filter_by(id=id).first()
+    user_type = user.user_type.lower()
+    id = user.id
 
-        if request.method == 'GET':
-            if user_type == 'teacher':
-                teacher = Teacher.query.filter_by(user_id=id).first()
-                return jsonify(user=teacherSchema.dump(teacher)), 200
+    if request.method == 'GET':
+        if user_type == 'teacher':
+            teacher = Teacher.query.filter_by(user_id=id).first()
+            return jsonify(user=teacherSchema.dump(teacher)), 200
 
-            if user_type == 'admin':
-                admin = Admin.query.filter_by(user_id=id).first()
-                return jsonify(user=adminSchema.dump(admin)), 200
+        if user_type == 'admin':
+            admin = Admin.query.filter_by(user_id=id).first()
+            return jsonify(user=adminSchema.dump(admin)), 200
 
-        if request.method == 'PATCH':
-            data = request.json.items()
-            if user_type == 'teacher':
-                tr = Teacher.query.filter_by(user_id=id).first()
+    if request.method == 'PATCH':
+        data = request.json.items()
+        if user_type == 'teacher':
+            tr = Teacher.query.filter_by(user_id=id).first()
 
-                for key, value in data:
-                    setattr(tr, key, value)
+            for key, value in data:
+                setattr(tr, key, value)
 
-                db.session.commit()
-                return jsonify(user=teacherSchema.dump(tr)), 200
-
-            if user_type == 'admin':
-                admin = Admin.query.filter_by(user_id=id).first()
-
-                for key, value in data:
-                    setattr(admin, key, value)
-
-                db.session.commit()
-                return jsonify(user=adminSchema.dump(admin)), 200
-
-        if request.method == 'DELETE':
-
-            if user_type == 'teacher':
-                Teacher.query.filter_by(user_id=id).delete()
-                db.session.commit()
-
-            if user_type == 'admin':
-                Admin.query.filter_by(user_id=id).delete()
-                db.session.commit()
-
-            db.session.delete(user)
             db.session.commit()
-            return jsonify({'message': 'User deleted successfully.'}), 200
+            return jsonify(user=teacherSchema.dump(tr)), 200
 
-    except SQLAlchemyError as e:
-        # Handle SQLAlchemy database errors
-        db.session.rollback()
-        return jsonify({"error": "Database error occurred"}), 500
+        if user_type == 'admin':
+            admin = Admin.query.filter_by(user_id=id).first()
 
-    except Exception as e:
-        # Handle other unexpected errors
-        return jsonify({"error": str(e)}), 500
+            for key, value in data:
+                setattr(admin, key, value)
+
+            db.session.commit()
+            return jsonify(user=adminSchema.dump(admin)), 200
+
+    if request.method == 'DELETE':
+
+        if user_type == 'teacher':
+            Teacher.query.filter_by(user_id=id).delete()
+            db.session.commit()
+
+        if user_type == 'admin':
+            Admin.query.filter_by(user_id=id).delete()
+            db.session.commit()
+
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'message': 'User deleted successfully.'}), 200
+
 
 # ADMIN FUNCTIONALITY
 
-@app.route('/admin_create', methods=['GET','POST'])
-@jwt_required()
+@app.route('/admin_create', methods=['GET', 'POST'])
+# @jwt_required()
 def admin_create():
-    try:
-        token_data = get_jwt_identity()
-        user_email = token_data['email']
-        user = User.query.filter_by(email=user_email).first()
-        if user.user_type.lower() != 'admin':
-            return {"msg": "Unauthorized"}
-        
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        return jsonify({"error": "Database error occurred"}), 500
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'admin':
+    #     return {"msg": "Unauthorized"}
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    if request.method == 'GET':
+        teachers = Teacher.query.all()
+        students = Student.query.all()
+        parents = Parent.query.all()
+        departments = Department.query.all()
+        tr_attendance = TeacherAttendance.query.all()
+        leave = LeaveOfAbsence.query.all()
+
+        return jsonify(teachers=teacherSchema.dump(teachers, many=True),
+                       students=studentSchema.dump(students, many=True),
+                       parents=parentSchema.dump(parents, many=True),
+                       departments=departmentSchema.dump(
+                           departments, many=True),
+                       tr_attendance=teacherAttendanceSchema.dump(
+                           tr_attendance, many=True),
+                       leave=leaveOfAbsenceSchema.dump(leave, many=True)
+                       )
+    if request.method == 'POST':
+        data = request.get_json()
+
+        user_name = data['user_name']
+        email = data['email']
+        password = data['password']
+        user_type = data['user_type'].lower()
+
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user = user
+        else:
+            user = User(user_name=user_name, email=email,
+                        password_hash=password, user_type=user_type)
+
+        db.session.add(user)
+        db.session.commit()
+
+        if user_type == 'teacher':
+            obj = {'first_name': data['first_name'],
+                   'user_id': user.id,
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'employment_date': data['employment_date'],
+                   'appraisal': data['appraisal']}
+
+            teacher = Teacher(**obj)
+
+            db.session.add(teacher)
+            db.session.commit()
+
+            return jsonify(user=teacherSchema.dump(teacher))
+
+        if user_type == 'student':
+            obj = {'user_id': user.id,
+                   'first_name': data['first_name'],
+                   'last_name': data['last_name'],
+                   'DOB': data['DOB'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'enrollment_date': data['enrollment_date'],
+                   'department_id': data['department_id'],
+                   'course_id': data['course_id'],
+                   'teacher_id': data['teacher_id']
+                   }
+
+            std = Student(**obj)
+
+            db.session.add(std)
+            db.session.commit()
+
+            return jsonify(std=studentSchema.dump(std))
+
+        if user_type == 'parent':
+            obj = {'user_id': user.id,
+                   'first_name': data['first_name'],
+                   'last_name': data['last_name'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'student_id': data['student_id']
+                   }
+
+            parent = Parent(**obj)
+
+            db.session.add(parent)
+            db.session.commit()
+
+            return jsonify(parent=parentSchema.dump(parent))
+
+
+@app.route('/admin_create_two/<string:name>', methods=['GET', 'POST'])
+# @jwt_required()
+def admin_create_two(name):
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'admin':
+    #     return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        departments = Department.query.all()
+        courses = Course.query.all()
+        units = Unit.query.all()
+
+        return jsonify(departments=departmentSchema.dump(departments, many=True),
+                       courses=courseSchema.dump(courses, many=True),
+                       units=unitSchema.dump(units, many=True)
+                       )
+
+    data = request.get_json()
+    if request.method == 'POST':
+        if name.lower() == 'department':
+            dep = Department(**data)
+
+            db.session.add(dep)
+            db.session.commit()
+
+            return jsonify(department=departmentSchema.dump(dep))
+
+        if name.lower() == 'course':
+            course = Course(**data)
+
+            db.session.add(course)
+            db.session.commit()
+
+            return jsonify(course=courseSchema.dump(course))
+
+        if name.lower() == 'unit':
+            unit = Unit(**data)
+
+            db.session.add(unit)
+            db.session.commit()
+
+            return jsonify(unit=UnitSchema.dump(unit))
+
+        if name.lower() == 'teacherattendance':
+            attendance = TeacherAttendance(**data)
+
+            db.session.add(attendance)
+            db.session.commit()
+
+            return jsonify(attendance=teacherAttendanceSchema.dump(attendance))
+
+        if name.lower() == 'leave':
+            pass
 
 
 if __name__ == "__main__":
