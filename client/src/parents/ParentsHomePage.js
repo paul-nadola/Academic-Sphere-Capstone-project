@@ -33,6 +33,7 @@ function ParentsPage() {
       </div>
         
           <div className="grid grid-cols-3 gap-4">
+          <h2 className='font-bold text-xl'>Welcome David,</h2>
       <div className="p-4 border bg-red-800">
         <h3>DAVID JACKSON</h3>
         <h4><b>Phone Number:</b> 0944244</h4>
