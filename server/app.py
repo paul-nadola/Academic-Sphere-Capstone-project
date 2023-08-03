@@ -14,12 +14,6 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         load_instance = True
 
-    # student = fields.Nested('StudentSchema', default=None)
-    # parent = fields.Nested('ParentSchema', default=None)
-    # teacher = fields.Nested('TeacherSchema', default=None)
-    # admin = fields.Nested('AdminSchema', default=None)
-    # superadmin = fields.Nested('SuperAdminSchema', default=None)
-
 
 class TeacherSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -79,7 +73,7 @@ class DepartmentSchema(SQLAlchemyAutoSchema):
         model = Department
         load_instance = True
 
-    courses = fields.Nested("CourseSchema")
+    courses = fields.Nested("CourseSchema", many=True, only=("course_name",))
     teachers = fields.Nested(
         "TeacherSchema", only=("first_name", "last_name",))
 
@@ -90,7 +84,7 @@ class CourseSchema(SQLAlchemyAutoSchema):
         load_instance = True
 
     department = fields.Nested(DepartmentSchema, only=("department_name",))
-    units = fields.Nested("UnitSchema", only=("unit_name",))
+    units = fields.Nested("UnitSchema", only=("unit_name",), many=True)
 
 
 class UnitSchema(SQLAlchemyAutoSchema):
@@ -135,6 +129,8 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LeaveOfAbsence
         load_instance = True
+        
+    teacher = fields.Nested("TeacherSchema", only=("user_name",))
 
 
 userSchema = UserSchema()
@@ -320,30 +316,22 @@ def superadmin_edit(id):
 # ADMIN FUNCTIONALITY
 
 @app.route('/admin_create', methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def admin_create():
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'admin':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         teachers = Teacher.query.all()
         students = Student.query.all()
         parents = Parent.query.all()
-        departments = Department.query.all()
-        tr_attendance = TeacherAttendance.query.all()
-        leave = LeaveOfAbsence.query.all()
 
         return jsonify(teachers=teacherSchema.dump(teachers, many=True),
                        students=studentSchema.dump(students, many=True),
-                       parents=parentSchema.dump(parents, many=True),
-                       departments=departmentSchema.dump(
-                           departments, many=True),
-                       tr_attendance=teacherAttendanceSchema.dump(
-                           tr_attendance, many=True),
-                       leave=leaveOfAbsenceSchema.dump(leave, many=True)
+                       parents=parentSchema.dump(parents, many=True)
                        )
     if request.method == 'POST':
         data = request.get_json()
@@ -418,26 +406,28 @@ def admin_create():
 
 
 @app.route('/admin_create_two/<string:name>', methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def admin_create_two(name):
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'admin':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         departments = Department.query.all()
         courses = Course.query.all()
         units = Unit.query.all()
         attendance = TeacherAttendance.query.all()
+        leave = LeaveOfAbsence.query.all()
 
         return jsonify(departments=departmentSchema.dump(departments, many=True),
                        courses=courseSchema.dump(courses, many=True),
                        units=unitSchema.dump(units, many=True),
                        tr_attendance=teacherAttendanceSchema.dump(
-                           attendance, many=True)
-                       )
+            attendance, many=True),
+            leave=leaveOfAbsenceSchema.dump(leave, many=True)
+        )
 
     data = request.get_json()
     if request.method == 'POST':
@@ -473,6 +463,15 @@ def admin_create_two(name):
                 db.session.commit()
 
             return {"msg": "Attendance marked"}, 200
+
+        if name.lower() == 'leave':
+
+            leave = LeaveOfAbsence(**data)
+
+            db.session.add(leave)
+            db.session.commit()
+
+            return jsonify(leave=leaveOfAbsenceSchema.dump(leave)), 200
 
         if name.lower() == 'leave':
             pass

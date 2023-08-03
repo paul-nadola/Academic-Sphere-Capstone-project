@@ -323,7 +323,6 @@ class LeaveOfAbsence(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
     start = db.Column(db.Date)
     end = db.Column(db.Date)
-    status = db.Column(db.String(25))
 
     def __repr__(self):
         return f'Date: {self.date} ID:{self.leave_id}'
