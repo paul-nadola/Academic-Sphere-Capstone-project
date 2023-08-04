@@ -1,8 +1,7 @@
-
 from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db
-import datetime
+from functools import wraps
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -14,12 +13,6 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-
-    # student = fields.Nested('StudentSchema', default=None)
-    # parent = fields.Nested('ParentSchema', default=None)
-    # teacher = fields.Nested('TeacherSchema', default=None)
-    # admin = fields.Nested('AdminSchema', default=None)
-    # superadmin = fields.Nested('SuperAdminSchema', default=None)
 
 
 class TeacherSchema(SQLAlchemyAutoSchema):
@@ -80,8 +73,9 @@ class DepartmentSchema(SQLAlchemyAutoSchema):
         model = Department
         load_instance = True
 
-    course = fields.Nested("CourseSchema", only=("course_name",))
-    teacher = fields.Nested("TeacherSchema", only=("first_name", "last_name",))
+    courses = fields.Nested("CourseSchema", many=True, only=("course_name",))
+    teachers = fields.Nested(
+        "TeacherSchema", only=("first_name", "last_name",))
 
 
 class CourseSchema(SQLAlchemyAutoSchema):
@@ -89,13 +83,15 @@ class CourseSchema(SQLAlchemyAutoSchema):
         model = Course
         load_instance = True
 
-    department = fields.Nested("DepartmentSchema", only=("department_name",))
+    department = fields.Nested(DepartmentSchema, only=("department_name",))
+    units = fields.Nested("UnitSchema", only=("unit_name",), many=True)
 
 
 class UnitSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         load_instance = True
+    course = fields.Nested("CourseSchema", only=("course_name",))
 
 
 class AssessmentSchema(SQLAlchemyAutoSchema):
@@ -120,6 +116,7 @@ class TeacherAttendanceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = TeacherAttendance
         load_instance = True
+    teacher = fields.Nested(TeacherSchema, only=("first_name", "user_name",))
 
 
 class StudentAttendanceSchema(SQLAlchemyAutoSchema):
@@ -132,6 +129,8 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LeaveOfAbsence
         load_instance = True
+
+    teacher = fields.Nested("TeacherSchema", only=("user_name",))
 
 
 userSchema = UserSchema()
@@ -317,30 +316,22 @@ def superadmin_edit(id):
 # ADMIN FUNCTIONALITY
 
 @app.route('/admin_create', methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def admin_create():
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'admin':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         teachers = Teacher.query.all()
         students = Student.query.all()
         parents = Parent.query.all()
-        departments = Department.query.all()
-        tr_attendance = TeacherAttendance.query.all()
-        leave = LeaveOfAbsence.query.all()
 
         return jsonify(teachers=teacherSchema.dump(teachers, many=True),
                        students=studentSchema.dump(students, many=True),
-                       parents=parentSchema.dump(parents, many=True),
-                       departments=departmentSchema.dump(
-                           departments, many=True),
-                       tr_attendance=teacherAttendanceSchema.dump(
-                           tr_attendance, many=True),
-                       leave=leaveOfAbsenceSchema.dump(leave, many=True)
+                       parents=parentSchema.dump(parents, many=True)
                        )
     if request.method == 'POST':
         data = request.get_json()
@@ -415,23 +406,28 @@ def admin_create():
 
 
 @app.route('/admin_create_two/<string:name>', methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def admin_create_two(name):
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'admin':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         departments = Department.query.all()
         courses = Course.query.all()
         units = Unit.query.all()
+        attendance = TeacherAttendance.query.all()
+        leave = LeaveOfAbsence.query.all()
 
         return jsonify(departments=departmentSchema.dump(departments, many=True),
                        courses=courseSchema.dump(courses, many=True),
-                       units=unitSchema.dump(units, many=True)
-                       )
+                       units=unitSchema.dump(units, many=True),
+                       tr_attendance=teacherAttendanceSchema.dump(
+            attendance, many=True),
+            leave=leaveOfAbsenceSchema.dump(leave, many=True)
+        )
 
     data = request.get_json()
     if request.method == 'POST':
@@ -457,18 +453,110 @@ def admin_create_two(name):
             db.session.add(unit)
             db.session.commit()
 
-            return jsonify(unit=UnitSchema.dump(unit))
+            return jsonify(unit=unitSchema.dump(unit))
 
         if name.lower() == 'teacherattendance':
-            attendance = TeacherAttendance(**data)
+            for datum in data:
+                attendance = TeacherAttendance(**datum)
 
-            db.session.add(attendance)
+                db.session.add(attendance)
+                db.session.commit()
+
+            return {"msg": "Attendance marked"}, 200
+
+        if name.lower() == 'leave':
+
+            leave = LeaveOfAbsence(**data)
+
+            db.session.add(leave)
             db.session.commit()
 
-            return jsonify(attendance=teacherAttendanceSchema.dump(attendance))
+            return jsonify(leave=leaveOfAbsenceSchema.dump(leave)), 200
 
         if name.lower() == 'leave':
             pass
+
+
+def admin_resource(resource_model, resource_schema, resource_name):
+    def decorator(func):
+        @wraps(func)
+        @jwt_required()
+        def wrapper(id):
+            token_data = get_jwt_identity()
+            user_email = token_data['email']
+            user = User.query.filter_by(email=user_email).first()
+            if user.user_type.lower() != 'admin':
+                return {"msg": "Unauthorized"}
+
+            res_id = resource_name + '_id'
+            resource = resource_model.query.filter_by(**{res_id: id}).first()
+
+            if not resource:
+                return {"msg": f"{resource_name} does not exist"}, 400
+
+            if request.method == 'GET':
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'PATCH':
+                data = request.get_json()
+                for key, value in data.items():
+                    setattr(resource, key, value)
+                db.session.commit()
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'DELETE':
+                db.session.delete(resource)
+                db.session.commit()
+                return {"msg": f"{resource_name} deleted successfully"}, 200
+
+        return wrapper
+    return decorator
+
+
+@app.route('/admin_teacher/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Teacher, teacherSchema, 'teacher')
+def admin_teacher(id):
+    pass
+
+
+@app.route('/admin_student/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Student, studentSchema, 'student')
+def admin_student(id):
+    pass
+
+
+@app.route('/admin_parent/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Parent, parentSchema, 'parent')
+def admin_parent(id):
+    pass
+
+
+@app.route('/admin_department/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Department, departmentSchema, 'department')
+def admin_department(id):
+    pass
+
+
+@app.route('/admin_course/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Course, courseSchema, 'course')
+def admin_course(id):
+    pass
+
+
+@app.route('/admin_unit/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Unit, unitSchema, 'unit')
+def admin_unit(id):
+    pass
+
+@app.route('/admin_teacherattendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(TeacherAttendance, teacherAttendanceSchema, 'attendance')
+def admin_teacherattendance(id):
+    pass
+
+@app.route('/admin_leave/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(LeaveOfAbsence, leaveOfAbsenceSchema, 'leave')
+def admin_leave(id):
+    pass
 
 
 if __name__ == "__main__":
