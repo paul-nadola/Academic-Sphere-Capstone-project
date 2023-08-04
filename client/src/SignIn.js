@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function SignIn() {
   const [formData, setFormData] = useState({
-    name: '',
+    
     email: '',
     password: '',
   });
@@ -47,20 +47,7 @@ function SignIn() {
       <div className="bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-4xl font-bold mb-6">Sign In</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex flex-col items-center">
-            <label htmlFor="name" className="block font-medium mb-1">
-              Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="border border-gray-300 rounded px-4 py-2 w-full"
-              required
-            />
-          </div>
+          
           <div className="flex flex-col items-center">
             <label htmlFor="email" className="block font-medium mb-1">
               Email Address

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { Link } from 'react-router-dom';
 
 function Home() {
-  const [showFullText, setShowFullText] = useState(false);
+  // const [showFullText, setShowFullText] = useState(false);
 
-  const toggleText = () => {
-    setShowFullText((prevShowFullText) => !prevShowFullText);
-  };
+  // const toggleText = () => {
+  //   setShowFullText((prevShowFullText) => !prevShowFullText);
+  // };
 
   return (
     <div
@@ -23,35 +23,30 @@ function Home() {
           <div className="flex justify-evenly">
             {/* ... (buttons and links) ... */}
             <button className='mt-4'>
-            <Link
-              to="/departments"
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
-            >
-              Departments
-            </Link>
-            <Link
-              to="/parents"
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
-            >
-              Parent Page
-            </Link>
-            </button>
+            
+  <div className="flex items-center">
+    <Link
+      to="/departments"
+      className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-6"
+    >
+      Departments
+    </Link>
+    <Link
+      to="/about"
+      className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 ml-4"
+    >
+      About
+    </Link>
+  </div>
+</button>
+
 
             <button className='mt-4'>
             <Link
-              to="/students"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
-            >
-              Student Page
-            </Link>
-            </button>
-            
-            <button className='mt-4'>
-            <Link
-              to="/about"
+              to="/teachers"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
             >
-              About
+              Teachers
             </Link>
             </button>
           </div>
@@ -60,55 +55,14 @@ function Home() {
             Our dedicated team of educators is committed to providing a nurturing and stimulating learning environment that encourages curiosity, critical thinking, and a passion for lifelong learning. We believe in a holistic approach to education, encompassing academics, arts, sports, and character development, to shape well-rounded individuals capable of facing the challenges of the ever-changing world.
             With state-of-the-art facilities and innovative teaching methodologies, we strive to create a student-centric atmosphere that fosters curiosity and creativity. Our comprehensive curriculum is designed to cater to the diverse learning needs of our students, ensuring that they excel academically and develop essential life skills.
             Beyond academics, we take pride in our inclusive school community, where students from various backgrounds come together to learn, collaborate, and grow. Our emphasis on values, respect, and empathy nurtures a culture of mutual understanding and appreciation.</p>
-          <div className="mt-4">
-            <button className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center">
-              <Link to="/signin">Sign In</Link>
-            </button>
-            
-          </div>
-          <div className='items-center justify-center'>
-          <h2 className="text-blue-700 text-4xl font-bold text-center">Welcome To Prudent Group Of Schools</h2>
-          <p className="w-4/5 mx-auto text-4xl font-bold mb-6">
-            {/* Toggle between full text and truncated text based on 'showFullText' state */}
-            {showFullText ? (
-              <>
-                At Prudent Group of Schools, we believe that education is not merely about acquiring knowledge; it is a
-                journey of nurturing young minds, fostering creativity, and building a strong foundation for a successful
-                future. With a legacy of excellence in education, our institution has been empowering students to realize
-                their full potential and become responsible global citizens.
-                <br />
-                <br />
-                Our dedicated team of educators is committed to providing a nurturing and stimulating learning environment
-                that encourages curiosity, critical thinking, and a passion for lifelong learning. We believe in a holistic
-                approach to education, encompassing academics, arts, sports, and character development, to shape well-rounded
-                individuals capable of facing the challenges of the ever-changing world.
-                <br />
-                <br />
-                With state-of-the-art facilities and innovative teaching methodologies, we strive to create a student-centric
-                atmosphere that fosters curiosity and creativity. Our comprehensive curriculum is designed to cater to the diverse
-                learning needs of our students, ensuring that they excel academically and develop essential life skills.
-                <br />
-                <br />
-                Beyond academics, we take pride in our inclusive school community, where students from various backgrounds come
-                together to learn, collaborate, and grow. Our emphasis on values, respect, and empathy nurtures a culture of mutual
-                understanding and appreciation.
-              </>
-            ) : (
-              // Show the truncated version of the paragraph with a "Show More" button
-              <>
-                At Prudent Group of Schools, we believe that education is not merely about acquiring knowledge; it is a journey of
-                nurturing young minds, fostering creativity, and building a strong foundation for a successful future. With a legacy
-                of excellence in education, our institution has been empowering students to realize their full potential and become
-                responsible global citizens.
-                <br />
-                {/* Add an ellipsis and "Show More" button */}
-                <button className="text-blue-500 underline mt-2" onClick={toggleText}>
-                  Show More
-                </button>
-              </>
-            )}
-          </p>
-          </div>
+            <div className="mt-4 flex justify-center">
+  <button
+    className="inline-block bg-black text-white py-1 px-2 rounded hover:bg-blue-600 transition duration-300 text-center text-sm"
+  >
+    <Link to="/signin">Sign In</Link>
+  </button>
+</div>
+
           
         </div>
       </div>
