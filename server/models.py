@@ -106,7 +106,8 @@ class Teacher(db.Model):
     teacher_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
-    last_name = db.Column(db.String(255), index=True, unique=True ,nullable=False)
+    last_name = db.Column(db.String(255), index=True,
+                          unique=True, nullable=False)
     DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
@@ -152,10 +153,10 @@ class Student(db.Model):
                                   back_populates='students', cascade='all')
     grades = db.relationship('Grade', secondary=student_grade_table,
                              back_populates='students', cascade='all')
-    parent_guardian = db.relationship(
-        'Parent', backref='student', cascade='all')
+    parent = db.relationship(
+        'Parent', back_populates='student', uselist=False, single_parent=True)
     teacher = db.relationship(
-        'Teacher', backref='students', cascade='all')
+        'Teacher', backref='student', cascade='all')
     attendance = db.relationship(
         'StudentAttendance', backref='student', cascade='all')
 
@@ -171,10 +172,12 @@ class Parent(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
+
+    student = db.relationship(
+        'Student', back_populates='parent', uselist=False, single_parent=True)
 
     enquiry = db.relationship(
         'Enquiry', backref='parent', cascade='all')
@@ -188,14 +191,14 @@ class Department(db.Model):
     __tablename__ = 'departments'
 
     department_id = db.Column(db.Integer, primary_key=True)
-    department_name = db.Column(db.String(255), nullable=False)
+    department_name = db.Column(db.String(255), unique=True, nullable=False)
     hod_name = db.Column(db.String(255), nullable=False)
 
     teachers = db.relationship(
         'Teacher', backref='department', cascade='all')
     students = db.relationship(
         'Student', backref='department', cascade='all')
-    course = db.relationship(
+    courses = db.relationship(
         'Course', backref='department', cascade='all')
 
     def __repr__(self):
@@ -215,8 +218,7 @@ class Course(db.Model):
         'Student', backref='course', cascade='all')
     teachers = db.relationship(
         'Teacher', backref='course', cascade='all')
-    units = db.relationship('Unit', backref='course',
-                            cascade='all')
+    units = db.relationship('Unit', backref='course')
 
     def __repr__(self):
         return f'Course: {self.course_name} ID:{self.course_id}'
@@ -227,7 +229,8 @@ class Unit(db.Model):
     __tablename__ = 'units'
 
     unit_id = db.Column(db.Integer, primary_key=True)
-    unit_name = db.Column(db.String(255), nullable=False, index=True)
+    unit_name = db.Column(db.String(255), nullable=False,
+                          index=True, unique=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))
 
     assessment = db.relationship(
@@ -320,7 +323,6 @@ class LeaveOfAbsence(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
     start = db.Column(db.Date)
     end = db.Column(db.Date)
-    status = db.Column(db.String(25))
 
     def __repr__(self):
         return f'Date: {self.date} ID:{self.leave_id}'
