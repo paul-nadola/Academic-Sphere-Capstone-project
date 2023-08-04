@@ -20,8 +20,8 @@ import StudentsPage from './StudentsPage';
 
 function App() {
   return (
-    <Router>
-      <div>
+    <div>
+        {/* <Router> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/departments" element={<Departments />} />
@@ -33,8 +33,8 @@ function App() {
           <Route path="/parents" element={<ParentsPage />} />
           <Route path="/students" element={<StudentsPage />} />
         </Routes>
+    {/* </Router> */}
       </div>
-    </Router>
   );
 }
 
