@@ -20,7 +20,7 @@ function Home() {
       <div className="absolute inset-0 bg-black opacity-20"></div>
       <div className="h-full flex flex-col items-center justify-center relative z-10">
         <div>
-          <div className="flex justify-evenly">
+          <div className="flex justify-evenly p-5">
             {/* ... (buttons and links) ... */}
             <button className='mt-4'>
             <Link

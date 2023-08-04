@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import baImage from './images/bg-social-sciences.jpg';
 
 function SocialSciences() {
   return (
-    <div className="h-screen flex flex-col bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${baImage})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+    <div className="h-screen flex flex-col bg-cover bg-center bg-no-repeat" >
       <div className="flex justify-evenly">
         <button className="mt-4">
           <Link
