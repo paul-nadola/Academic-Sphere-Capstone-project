@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db
-import datetime
+from functools import wraps
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
@@ -477,72 +477,86 @@ def admin_create_two(name):
             pass
 
 
+def admin_resource(resource_model, resource_schema, resource_name):
+    def decorator(func):
+        @wraps(func)
+        @jwt_required()
+        def wrapper(id):
+            token_data = get_jwt_identity()
+            user_email = token_data['email']
+            user = User.query.filter_by(email=user_email).first()
+            if user.user_type.lower() != 'admin':
+                return {"msg": "Unauthorized"}
+
+            res_id = resource_name + '_id'
+            resource = resource_model.query.filter_by(**{res_id: id}).first()
+
+            if not resource:
+                return {"msg": f"{resource_name} does not exist"}, 400
+
+            if request.method == 'GET':
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'PATCH':
+                data = request.get_json()
+                for key, value in data.items():
+                    setattr(resource, key, value)
+                db.session.commit()
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'DELETE':
+                db.session.delete(resource)
+                db.session.commit()
+                return {"msg": f"{resource_name} deleted successfully"}, 200
+
+        return wrapper
+    return decorator
+
+
 @app.route('/admin_teacher/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
-@jwt_required()
+@admin_resource(Teacher, teacherSchema, 'teacher')
 def admin_teacher(id):
-    token_data = get_jwt_identity()
-    user_email = token_data['email']
-    user = User.query.filter_by(email=user_email).first()
-    if user.user_type.lower() != 'admin':
-        return {"msg": "Unauthorized"}
-
-    teacher = Teacher.query.filter_by(teacher_id=id).first()
-
-    if not teacher:
-        return {"msg": "Teacher does not exist"}, 400
-
-    if request.method == 'GET':
-        return jsonify(teacher=teacherSchema.dump(teacher)), 200
-
-    if request.method == 'PATCH':
-
-        data = request.get_json()
-
-        for key, value in data.items():
-            setattr(teacher, key, value)
-        db.session.commit()
-
-        return jsonify(teacher=teacherSchema.dump(teacher)), 200
-
-    if request.method == 'DELETE':
-
-        db.session.delete(teacher)
-        db.session.commit()
-        return {"msg": "Teacher deleted successfully"}, 200
+    pass
 
 
-@app.route('/admin_teacher/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
-@jwt_required()
-def admin_teacher(id):
-    token_data = get_jwt_identity()
-    user_email = token_data['email']
-    user = User.query.filter_by(email=user_email).first()
-    if user.user_type.lower() != 'admin':
-        return {"msg": "Unauthorized"}
+@app.route('/admin_student/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Student, studentSchema, 'student')
+def admin_student(id):
+    pass
 
-    teacher = Teacher.query.filter_by(teacher_id=id).first()
 
-    if not teacher:
-        return {"msg": "Teacher does not exist"}, 400
+@app.route('/admin_parent/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Parent, parentSchema, 'parent')
+def admin_parent(id):
+    pass
 
-    if request.method == 'GET':
-        return jsonify(teacher=teacherSchema.dump(teacher)), 200
 
-    if request.method == 'PATCH':
+@app.route('/admin_department/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Department, departmentSchema, 'department')
+def admin_department(id):
+    pass
 
-        data = request.get_json()
 
-        for key, value in data.items():
-            setattr(teacher, key, value)
-        db.session.commit()
+@app.route('/admin_course/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Course, courseSchema, 'course')
+def admin_course(id):
+    pass
 
-        return jsonify(teacher=teacherSchema.dump(teacher)), 200
 
-    if request.method == 'DELETE':
+@app.route('/admin_unit/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(Unit, unitSchema, 'unit')
+def admin_unit(id):
+    pass
 
-        db.session.delete(teacher)
-        db.session.commit()
-        return {"msg": "Teacher deleted successfully"}, 200
+@app.route('/admin_teacherattendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(TeacherAttendance, teacherAttendanceSchema, 'attendance')
+def admin_teacherattendance(id):
+    pass
+
+@app.route('/admin_leave/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@admin_resource(LeaveOfAbsence, leaveOfAbsenceSchema, 'leave')
+def admin_leave(id):
+    pass
 
 
 if __name__ == "__main__":
