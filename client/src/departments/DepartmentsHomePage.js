@@ -10,7 +10,25 @@ function Departments() {
               to="/departments"
               className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
             >
-              Departments
+              Teachers Data
+            </Link>
+            </button>
+
+            <button className='mt-4'>
+            <Link
+              to="/departments"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+            >
+              Students Data
+            </Link>
+            </button>
+
+            <button className='mt-4'>
+            <Link
+              to="/departments"
+              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+            >
+              Parents Data
             </Link>
             </button>
             

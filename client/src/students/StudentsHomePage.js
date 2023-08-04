@@ -34,6 +34,7 @@ function StudentsPage() {
           
           
       </div>
+      <h2 className='font-bold text-xl'>Welcome Christopher,</h2>
       <div className="grid grid-cols-2 gap-4">
 
       <div className="p-4 border bg-red-800">
