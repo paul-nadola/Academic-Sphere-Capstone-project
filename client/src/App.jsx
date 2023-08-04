@@ -15,7 +15,7 @@ import Teachers from './components/Teachers';
 
 function App() {
   return (
-    <div>
+    <div className="p-5">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/departments" element={<Departments />} />

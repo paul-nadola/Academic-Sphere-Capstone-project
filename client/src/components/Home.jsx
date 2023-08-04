@@ -16,10 +16,12 @@ function Home() {
             <button className="mt-4">
               <Link
                 to="/departments"
-                className="flex items-center justify-center  bg-black text-pri1 py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
+                className="flex items-center justify-center  bg-black text-sec2 py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
               >
                 Departments
               </Link>
+            </button>
+            <button>
               <Link
                 to="/parents"
                 className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
