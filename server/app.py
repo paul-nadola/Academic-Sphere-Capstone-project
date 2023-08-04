@@ -129,7 +129,7 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LeaveOfAbsence
         load_instance = True
-        
+
     teacher = fields.Nested("TeacherSchema", only=("user_name",))
 
 
@@ -475,6 +475,74 @@ def admin_create_two(name):
 
         if name.lower() == 'leave':
             pass
+
+
+@app.route('/admin_teacher/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@jwt_required()
+def admin_teacher(id):
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
+
+    teacher = Teacher.query.filter_by(teacher_id=id).first()
+
+    if not teacher:
+        return {"msg": "Teacher does not exist"}, 400
+
+    if request.method == 'GET':
+        return jsonify(teacher=teacherSchema.dump(teacher)), 200
+
+    if request.method == 'PATCH':
+
+        data = request.get_json()
+
+        for key, value in data.items():
+            setattr(teacher, key, value)
+        db.session.commit()
+
+        return jsonify(teacher=teacherSchema.dump(teacher)), 200
+
+    if request.method == 'DELETE':
+
+        db.session.delete(teacher)
+        db.session.commit()
+        return {"msg": "Teacher deleted successfully"}, 200
+
+
+@app.route('/admin_teacher/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@jwt_required()
+def admin_teacher(id):
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
+
+    teacher = Teacher.query.filter_by(teacher_id=id).first()
+
+    if not teacher:
+        return {"msg": "Teacher does not exist"}, 400
+
+    if request.method == 'GET':
+        return jsonify(teacher=teacherSchema.dump(teacher)), 200
+
+    if request.method == 'PATCH':
+
+        data = request.get_json()
+
+        for key, value in data.items():
+            setattr(teacher, key, value)
+        db.session.commit()
+
+        return jsonify(teacher=teacherSchema.dump(teacher)), 200
+
+    if request.method == 'DELETE':
+
+        db.session.delete(teacher)
+        db.session.commit()
+        return {"msg": "Teacher deleted successfully"}, 200
 
 
 if __name__ == "__main__":
