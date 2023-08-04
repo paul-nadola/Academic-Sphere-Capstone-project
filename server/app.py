@@ -1,4 +1,3 @@
-
 from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db
@@ -14,12 +13,6 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
-
-    # student = fields.Nested('StudentSchema', default=None)
-    # parent = fields.Nested('ParentSchema', default=None)
-    # teacher = fields.Nested('TeacherSchema', default=None)
-    # admin = fields.Nested('AdminSchema', default=None)
-    # superadmin = fields.Nested('SuperAdminSchema', default=None)
 
 
 class TeacherSchema(SQLAlchemyAutoSchema):
@@ -60,6 +53,7 @@ class StudentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    parent = fields.Nested("ParentSchema", exclude=("student",))
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -70,6 +64,8 @@ class ParentSchema(SQLAlchemyAutoSchema):
     user_name = fields.String(attribute='users.user_name')
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
+    student = fields.Nested(StudentSchema, only=(
+        "student_id", "first_name", "last_name", "user_name",))
 
 
 class DepartmentSchema(SQLAlchemyAutoSchema):
@@ -77,17 +73,25 @@ class DepartmentSchema(SQLAlchemyAutoSchema):
         model = Department
         load_instance = True
 
+    courses = fields.Nested("CourseSchema", many=True, only=("course_name",))
+    teachers = fields.Nested(
+        "TeacherSchema", only=("first_name", "last_name",))
+
 
 class CourseSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Course
         load_instance = True
 
+    department = fields.Nested(DepartmentSchema, only=("department_name",))
+    units = fields.Nested("UnitSchema", only=("unit_name",), many=True)
+
 
 class UnitSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         load_instance = True
+    course = fields.Nested("CourseSchema", only=("course_name",))
 
 
 class AssessmentSchema(SQLAlchemyAutoSchema):
@@ -112,6 +116,7 @@ class TeacherAttendanceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = TeacherAttendance
         load_instance = True
+    teacher = fields.Nested(TeacherSchema, only=("first_name", "user_name",))
 
 
 class StudentAttendanceSchema(SQLAlchemyAutoSchema):
@@ -124,6 +129,8 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = LeaveOfAbsence
         load_instance = True
+        
+    teacher = fields.Nested("TeacherSchema", only=("user_name",))
 
 
 userSchema = UserSchema()
@@ -321,18 +328,10 @@ def admin_create():
         teachers = Teacher.query.all()
         students = Student.query.all()
         parents = Parent.query.all()
-        departments = Department.query.all()
-        tr_attendance = TeacherAttendance.query.all()
-        leave = LeaveOfAbsence.query.all()
 
         return jsonify(teachers=teacherSchema.dump(teachers, many=True),
                        students=studentSchema.dump(students, many=True),
-                       parents=parentSchema.dump(parents, many=True),
-                       departments=departmentSchema.dump(
-                           departments, many=True),
-                       tr_attendance=teacherAttendanceSchema.dump(
-                           tr_attendance, many=True),
-                       leave=leaveOfAbsenceSchema.dump(leave, many=True)
+                       parents=parentSchema.dump(parents, many=True)
                        )
     if request.method == 'POST':
         data = request.get_json()
@@ -379,26 +378,6 @@ def admin_create():
                    'enrollment_date': data['enrollment_date'],
                    'department_id': data['department_id'],
                    'course_id': data['course_id'],
-                   'payment_id': data['payment_id']
-                   }
-
-            std = Student(**obj)
-
-            db.session.add(std)
-            db.session.commit()
-
-            return jsonify(std=studentSchema.dump(std))
-        
-        if user_type == 'student':
-            obj = {'user_id': user.id,
-                   'first_name': data['first_name'],
-                   'last_name': data['last_name'],
-                   'DOB': data['DOB'],
-                   'address': data['address'],
-                   'phone_number': data['phone_number'],
-                   'enrollment_date': data['enrollment_date'],
-                   'department_id': data['department_id'],
-                   'course_id': data['course_id'],
                    'teacher_id': data['teacher_id']
                    }
 
@@ -408,6 +387,94 @@ def admin_create():
             db.session.commit()
 
             return jsonify(std=studentSchema.dump(std))
+
+        if user_type == 'parent':
+            obj = {'user_id': user.id,
+                   'first_name': data['first_name'],
+                   'last_name': data['last_name'],
+                   'address': data['address'],
+                   'phone_number': data['phone_number'],
+                   'student_id': data['student_id']
+                   }
+
+            parent = Parent(**obj)
+
+            db.session.add(parent)
+            db.session.commit()
+
+            return jsonify(parent=parentSchema.dump(parent))
+
+
+@app.route('/admin_create_two/<string:name>', methods=['GET', 'POST'])
+@jwt_required()
+def admin_create_two(name):
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'admin':
+        return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        departments = Department.query.all()
+        courses = Course.query.all()
+        units = Unit.query.all()
+        attendance = TeacherAttendance.query.all()
+        leave = LeaveOfAbsence.query.all()
+
+        return jsonify(departments=departmentSchema.dump(departments, many=True),
+                       courses=courseSchema.dump(courses, many=True),
+                       units=unitSchema.dump(units, many=True),
+                       tr_attendance=teacherAttendanceSchema.dump(
+            attendance, many=True),
+            leave=leaveOfAbsenceSchema.dump(leave, many=True)
+        )
+
+    data = request.get_json()
+    if request.method == 'POST':
+        if name.lower() == 'department':
+            dep = Department(**data)
+
+            db.session.add(dep)
+            db.session.commit()
+
+            return jsonify(department=departmentSchema.dump(dep))
+
+        if name.lower() == 'course':
+            course = Course(**data)
+
+            db.session.add(course)
+            db.session.commit()
+
+            return jsonify(course=courseSchema.dump(course))
+
+        if name.lower() == 'unit':
+            unit = Unit(**data)
+
+            db.session.add(unit)
+            db.session.commit()
+
+            return jsonify(unit=unitSchema.dump(unit))
+
+        if name.lower() == 'teacherattendance':
+            for datum in data:
+                attendance = TeacherAttendance(**datum)
+
+                db.session.add(attendance)
+                db.session.commit()
+
+            return {"msg": "Attendance marked"}, 200
+
+        if name.lower() == 'leave':
+
+            leave = LeaveOfAbsence(**data)
+
+            db.session.add(leave)
+            db.session.commit()
+
+            return jsonify(leave=leaveOfAbsenceSchema.dump(leave)), 200
+
+        if name.lower() == 'leave':
+            pass
 
 
 if __name__ == "__main__":
