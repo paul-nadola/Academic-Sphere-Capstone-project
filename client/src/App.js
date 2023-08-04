@@ -16,13 +16,14 @@ import ParentsData from './admins/superAdmin/SA_Pages/ParentsData';
 
 function App() {
   return (
-    <Router>
-      <div>
+    <div>
+        {/* <Router> */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/departments" element={<Departments />} />
           <Route path="/about" element={<About />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/teachers" element={<Teacher/>}  />
           <Route path="/technology" element={<Technology />} />
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
@@ -33,8 +34,8 @@ function App() {
           <Route exact path='/superadmin/students_data' element={<StudentsData />} />
           <Route exact path='/superadmin/parents_data' element={<ParentsData />} />
         </Routes>
+    {/* </Router> */}
       </div>
-    </Router>
   );
 }
 

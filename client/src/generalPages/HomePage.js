@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React  from 'react';
 import { Link } from 'react-router-dom';
 
 function Home() {
-  const [showFullText, setShowFullText] = useState(false);
+  // const [showFullText, setShowFullText] = useState(false);
 
-  const toggleText = () => {
-    setShowFullText((prevShowFullText) => !prevShowFullText);
-  };
+  // const toggleText = () => {
+  //   setShowFullText((prevShowFullText) => !prevShowFullText);
+  // };
 
   return (
     <div
@@ -63,7 +63,7 @@ function Home() {
               to="/about"
               className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
             >
-              About
+              Teachers
             </Link>
             </button>
             <button className="mt-4 mb-2 flex items-center">
