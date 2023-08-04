@@ -1,3 +1,4 @@
+
 from flask import jsonify, request
 from models import User, Parent, Teacher, Student, Admin, SuperAdmin, Department, Course, Unit, Assessment, Grade, Payment, TeacherAttendance, StudentAttendance, LeaveOfAbsence
 from config import app, db

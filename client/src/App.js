@@ -9,6 +9,11 @@ import About from './About';
 import SignIn from './SignIn';
 import ParentsPage from './ParentsPage';
 import StudentsPage from './StudentsPage';
+// import Login from './components/Login';
+// import Nav from './components/Nav';
+// import {  useNavigate } from 'react-router-dom'
+import './App.css';
+// import Teachers from './components/Teachers';
 
 function App() {
   return (
