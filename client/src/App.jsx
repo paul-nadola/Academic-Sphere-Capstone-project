@@ -16,9 +16,11 @@ import Header from "./components/Header";
 
 function App() {
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <Header />
-      <div className="p-5">
+    <div className="bg-gray-100">
+      <div className="sticky top-0">
+        <Header />
+      </div>
+      <div>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/departments" element={<Departments />} />

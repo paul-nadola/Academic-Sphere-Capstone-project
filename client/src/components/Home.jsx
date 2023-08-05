@@ -11,8 +11,8 @@ function Home() {
   };
 
   return (
-    <>
-      <div className="text-center text-xl text-pri1 py-10 mb-10">
+    <div className="min-h-[80vh]">
+      <div className="text-center text-xl text-pri1 py-10 mb-10 ">
         <h1 className="mb-10 text-3xl">
           Welcome to <b>ACADEMIC SPHERE.</b>
         </h1>
@@ -26,8 +26,10 @@ function Home() {
           <SignIn />
         </div>
       </div>
-      <Footer/>
-    </>
+      <div className="sticky top-[100%]">
+        <Footer />
+      </div>
+    </div>
   );
 }
 
