@@ -98,6 +98,9 @@ class AssessmentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Assessment
         load_instance = True
+        
+    student = fields.Nested(StudentSchema, only=("first_name",))
+    unit = fields.Nested(UnitSchema, only=("unit_name",))
 
 
 class GradeSchema(SQLAlchemyAutoSchema):
@@ -548,15 +551,64 @@ def admin_course(id):
 def admin_unit(id):
     pass
 
+
 @app.route('/admin_teacherattendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @admin_resource(TeacherAttendance, teacherAttendanceSchema, 'attendance')
 def admin_teacherattendance(id):
     pass
 
+
 @app.route('/admin_leave/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @admin_resource(LeaveOfAbsence, leaveOfAbsenceSchema, 'leave')
 def admin_leave(id):
     pass
+
+
+@app.route('/teacher', methods=['GET', 'POST'])
+# @jwt_required()
+def teacher():
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'teacher':
+    #     return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        units = Unit.query.all()
+        students = Student.query.all()
+        assessments = Assessment.query.all()
+        grades = Grade.query.all()
+        std_attendance = StudentAttendance.query.all()
+
+        return jsonify(units=unitSchema.dump(units, many=True),
+                       students=studentSchema.dump(students, many=True),
+                       assessments=assessmentSchema.dump(
+                           assessments, many=True),
+                       grades=gradeSchema.dump(grades, many=True),
+                       std_attendance=studentAttendanceSchema.dump(
+                           std_attendance, many=True)
+                       )
+
+
+@app.route('/teacher/<string:name>', methods=['POST'])
+# @jwt_required()
+def teacher_post(name):
+    # token_data = get_jwt_identity()
+    # user_email = token_data['email']
+    # user = User.query.filter_by(email=user_email).first()
+    # if user.user_type.lower() != 'teacher':
+    #     return {"msg": "Unauthorized"}
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        
+        if name == "assessment":
+            ass = Assessment(**data)
+            
+            db.session.add(ass)
+            db.session.commit()
+            
+            return jsonify(data = assessmentSchema.dump(ass)), 200
 
 
 if __name__ == "__main__":

@@ -150,7 +150,7 @@ class Student(db.Model):
     units = db.relationship('Unit', secondary=student_units_table,
                             back_populates='students', cascade='all')
     assessments = db.relationship('Assessment', secondary=student_assessment_table,
-                                  back_populates='students', cascade='all')
+                                  back_populates='student', cascade='all')
     grades = db.relationship('Grade', secondary=student_grade_table,
                              back_populates='students', cascade='all')
     parent = db.relationship(
@@ -249,8 +249,9 @@ class Assessment(db.Model):
     assessment_id = db.Column(db.Integer, primary_key=True)
     assessment_name = db.Column(db.String(255), nullable=False, index=True)
     unit_id = db.Column(db.Integer, db.ForeignKey('units.unit_id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
 
-    students = db.relationship('Student', secondary=student_assessment_table,
+    student = db.relationship('Student', secondary=student_assessment_table,
                                back_populates='assessments', cascade='all')
 
     def __repr__(self):
@@ -265,6 +266,8 @@ class Grade(db.Model):
     grade = db.Column(db.String(10), nullable=False)
     assessment_id = db.Column(
         db.Integer, db.ForeignKey('assessments.assessment_id'))
+    
+    assessment = db.relationship("Assessment" , backref="grade")
 
     students = db.relationship('Student', secondary=student_grade_table,
                                back_populates='grades', cascade='all',)
