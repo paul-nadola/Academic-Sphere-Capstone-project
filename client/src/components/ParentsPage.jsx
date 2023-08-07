@@ -4,28 +4,28 @@ import { Link } from 'react-router-dom';
 function ParentsPage() {
   return (
     <div>
-      <div className="flex justify-evenly">
-      <button className="mb-2">
+      <div className="flex justify-end">
+      {/* <button className="mb-2">
         <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Home</button>
       </Link>
-        </button>
-      <button className="mb-2">
+        </button> */}
+      {/* <button className="mb-2">
       <Link to="/departments" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Academics</button>
       </Link>
-      </button>
+      </button> */}
         
-      <button className='mt-4 mb-2'>
+      {/* <button className='mt-4 mb-2'>
       <Link to="/about" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>About</button>
       </Link>
-      </button>
+      </button> */}
       
       <button className="mt-4 mb-2">
             <Link
               to="/signin"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="hover:bg-pri2 hover:text-white p-2 rounded-md"
             >
               Sign Out
             </Link>

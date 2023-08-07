@@ -6,33 +6,33 @@ function About() {
     <>
     <div className="flex justify-evenly">
       <button className="mb-2">
-        <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
+        <Link to="/" className="hover:bg-pri2 hover:text-white p-2 rounded-md">
         <button>Home</button>
       </Link>
         </button>
-      <button className="mb-2">
-      <Link to="/departments" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
+      {/* <button className="mb-2">
+      <Link to="/departments" className="hover:bg-pri2 hover:text-white p-2 rounded-md">
         <button>Academics</button>
       </Link>
-      </button>
+      </button> */}
         
-      <button className='mt-4 mb-2'>
-      <Link to="/about" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
+      {/* <button className='mt-4 mb-2'>
+      <Link to="/about" className="hover:bg-pri2 hover:text-white p-2 rounded-md">
         <button>About</button>
       </Link>
-      </button>
+      </button> */}
       
       <button className="mt-4 mb-2">
             <Link
               to="/signin"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="hover:bg-pri2 hover:text-white p-2 rounded-md"
             >
               Sign Out
             </Link>
           </button>
       </div>
     <div
-      className="h-screen bg-cover bg-center flex flex-col items-start justify-start p-8"
+      className="h-full bg-cover bg-center flex flex-col items-start justify-start p-8"
       style={{
         backgroundImage: `url('https://images.unsplash.com/photo-1516979187457-637abb4f9353?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80')`,
         backgroundSize: 'cover',
@@ -70,7 +70,7 @@ Welcome to Prudent Group of Schools!</p><br/>
       <button>
         <Link
           to="/"
-          className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center mt-4"
+          className="hover:bg-pri2 hover:text-white p-2 rounded-md"
         >
           Back to Homepage
         </Link>

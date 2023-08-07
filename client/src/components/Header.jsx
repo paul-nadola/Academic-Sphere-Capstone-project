@@ -14,15 +14,40 @@ const Header = () => {
           </NavLink>
         </div>
         <div className="flex text-xl items-center">
-          <div className="hover:bg-pri2 hover:text-white p-2 rounded-md">ABOUT</div>
-          <div>
+        
+          {/* <div>
             <NavLink to={"/login"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
               CONTACT
             </NavLink>
+          </div> */}
+          {/* <div>
+            <NavLink to={"/departments"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+              ACADEMICS
+            </NavLink>
           </div>
           <div>
-            <NavLink to={"/admin"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">GUEST</NavLink>
+            <NavLink to={"/students"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+              STUD PAGE
+            </NavLink>
           </div>
+          <div>
+            <NavLink to={"/parents"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+              PARENTS PAGE
+            </NavLink>
+          </div>
+          <div>
+            <NavLink to={"/about"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+              ABOUT
+            </NavLink>
+          </div>
+          <div>
+            <NavLink to={"/superadmin"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+              SUPER ADMIN
+            </NavLink>
+          </div> */}
+          {/* <div>
+            <NavLink to={"/admin"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">GUEST</NavLink>
+          </div> */}
         </div>
       </div>
     </>

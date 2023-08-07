@@ -13,6 +13,10 @@ import Login from "./components/Login";
 import Nav from "./components/Nav";
 import Teachers from "./components/Teachers";
 import Header from "./components/Header";
+import SuperAdmin from "./admins/SuperAdmin/SuperAdminHome";
+import ParentsData from "./admins/SuperAdmin/SA_Pages/ParentsData";
+import StudentsData from "./admins/SuperAdmin/SA_Pages/StudentsData";
+import TeachersData from "./admins/SuperAdmin/SA_Pages/TeachersData";
 
 function App() {
   return (
@@ -32,6 +36,10 @@ function App() {
           <Route path="/engineering" element={<Engineering />} />
           <Route path="/parents" element={<ParentsPage />} />
           <Route path="/students" element={<StudentsPage />} />
+          <Route path="/superadmin" element={<SuperAdmin />} />
+          <Route exact path='/superadmin/parents_data' element={<ParentsData />} />
+          <Route exact path='/superadmin/teachers_data' element={<TeachersData />} />
+          <Route exact path='/superadmin/students_data' element={<StudentsData />} />
         </Routes>
       </div>
     </div>
