@@ -1,8 +1,10 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import icon from "../assets/icon.png";
+import { ProjectContext } from "./Context";
 
 const Header = () => {
+  const { state, dispatch } = useContext(ProjectContext);
   return (
     <>
       <div className="header-container justify-between md:flex text-cream bg-white px-10 text-pri1 py-10 shadow-md mb-5 items-center">
@@ -14,14 +16,29 @@ const Header = () => {
           </NavLink>
         </div>
         <div className="flex text-xl items-center">
-          <div className="hover:bg-pri2 hover:text-white p-2 rounded-md">ABOUT</div>
+          <div className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+            ABOUT
+          </div>
           <div>
-            <NavLink to={"/login"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">
+            <NavLink
+              to={"/login"}
+              className="hover:bg-pri2 hover:text-white p-2 rounded-md"
+            >
               CONTACT
             </NavLink>
           </div>
           <div>
-            <NavLink to={"/admin"} className="hover:bg-pri2 hover:text-white p-2 rounded-md">GUEST</NavLink>
+            <button
+              onClick={() => {
+                sessionStorage.removeItem("token"), window.location.reload();
+              }}
+              className="hover:text-red-500"
+            >
+              {state.user ? "LOGOUT" : null}
+            </button>
+          </div>
+          <div className="bg-pri2 text-white p-2 ml-2 rounded-md">
+            {state.user ? state.user.user_name : "LOGIN"}
           </div>
         </div>
       </div>
