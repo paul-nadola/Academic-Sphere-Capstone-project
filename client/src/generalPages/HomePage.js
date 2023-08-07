@@ -1,12 +1,12 @@
-import React  from 'react';
+import React , {useState} from 'react';
 import { Link } from 'react-router-dom';
 
 function Home() {
-  // const [showFullText, setShowFullText] = useState(false);
+  const [showFullText, setShowFullText] = useState(false);
 
-  // const toggleText = () => {
-  //   setShowFullText((prevShowFullText) => !prevShowFullText);
-  // };
+  const toggleText = () => {
+    setShowFullText((prevShowFullText) => !prevShowFullText);
+  };
 
   return (
     <div
