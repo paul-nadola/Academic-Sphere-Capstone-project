@@ -60,7 +60,7 @@ import { Link } from 'react-router-dom';
 
 
 function StudentInfo() {
-  // Dummy data for the table
+  
   const students = [
     {
       id: 1,
