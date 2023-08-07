@@ -54,6 +54,8 @@ class StudentSchema(SQLAlchemyAutoSchema):
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
     parent = fields.Nested("ParentSchema", exclude=("student",))
+    student_assessment = fields.Nested(
+        "GradeSchema", many=True, only=("assessment", "score",))
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -91,22 +93,28 @@ class UnitSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         load_instance = True
-    course = fields.Nested("CourseSchema", only=("course_name",))
+    # course = fields.Nested("CourseSchema", only=("course_name",))
+    course = fields.Function(lambda obj: obj.course.course_name)
 
 
 class AssessmentSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Assessment
         load_instance = True
-        
-    student = fields.Nested(StudentSchema, only=("first_name",))
-    unit = fields.Nested(UnitSchema, only=("unit_name",))
+
+    student_assessment = fields.Nested(
+        "GradeSchema", many=True, only=("student", "score",))
+    # unit = fields.Nested(UnitSchema, only=("unit_name",))
+    unit = fields.Function(lambda obj: obj.unit.unit_name)
 
 
 class GradeSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Grade
         load_instance = True
+
+    student = fields.Function(lambda obj: obj.student.first_name)
+    assessment = fields.Function(lambda obj: obj.assessment.assessment_name)
 
 
 class PaymentSchema(SQLAlchemyAutoSchema):
@@ -126,6 +134,9 @@ class StudentAttendanceSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = StudentAttendance
         load_instance = True
+
+    # student = fields.Nested(StudentSchema, only=("first_name",))
+    student = fields.Function(lambda obj: obj.student.first_name)
 
 
 class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
@@ -598,18 +609,85 @@ def teacher_post(name):
     # user = User.query.filter_by(email=user_email).first()
     # if user.user_type.lower() != 'teacher':
     #     return {"msg": "Unauthorized"}
-    
+
     if request.method == 'POST':
         data = request.get_json()
-        
+
         if name == "assessment":
             ass = Assessment(**data)
-            
+
             db.session.add(ass)
             db.session.commit()
-            
-            return jsonify(data = assessmentSchema.dump(ass)), 200
 
+            return jsonify(data=assessmentSchema.dump(ass)), 200
+
+        if name == "grades":
+            for datum in data:
+                grades = Grade(**datum)
+
+                db.session.add(grades)
+                db.session.commit()
+
+            return {"msg": "grading done"}, 200
+
+        if name == "attendance":
+            for datum in data:
+                attendance = StudentAttendance(**datum)
+
+                db.session.add(attendance)
+                db.session.commit()
+
+            return {"msg": "Attendance marked"}, 200
+        
+def teacher_resource(resource_model, resource_schema, resource_name):
+    def decorator(func):
+        @wraps(func)
+        # @jwt_required()
+        def wrapper(id):
+            # token_data = get_jwt_identity()
+            # user_email = token_data['email']
+            # user = User.query.filter_by(email=user_email).first()
+            # if user.user_type.lower() != 'teacher':
+            #     return {"msg": "Unauthorized"}
+
+            res_id = resource_name + '_id'
+            resource = resource_model.query.filter_by(**{res_id: id}).first()
+
+            if not resource:
+                return {"msg": f"{resource_name} does not exist"}, 400
+
+            if request.method == 'GET':
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'PATCH':
+                data = request.get_json()
+                for key, value in data.items():
+                    setattr(resource, key, value)
+                db.session.commit()
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'DELETE':
+                db.session.delete(resource)
+                db.session.commit()
+                return {"msg": f"{resource_name} deleted successfully"}, 200
+
+        return wrapper
+    return decorator
+
+@app.route('/teacher_assessment/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(Assessment, assessmentSchema, 'assessment')
+def teacher_assessment(id):
+    pass
+
+@app.route('/teacher_grades/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(Grade, gradeSchema, 'grade')
+def teacher_grade(id):
+    pass
+
+@app.route('/teacher_attendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(StudentAttendance, studentAttendanceSchema, 'attendance')
+def teacher_attendance(id):
+    pass
 
 if __name__ == "__main__":
     app.run(debug=True, port=5555)

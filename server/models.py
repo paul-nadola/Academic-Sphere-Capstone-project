@@ -50,19 +50,6 @@ student_units_table = db.Table('student_units',
                                    'units.unit_id'), primary_key=True)
                                )
 
-student_assessment_table = db.Table('student_assessment',
-                                    db.Column('student_id', db.Integer, db.ForeignKey(
-                                        'students.student_id'), primary_key=True),
-                                    db.Column('assessment_id', db.Integer, db.ForeignKey(
-                                        'assessments.assessment_id'), primary_key=True)
-                                    )
-student_grade_table = db.Table('student_grade',
-                               db.Column('student_id', db.Integer, db.ForeignKey(
-                                   'students.student_id'), primary_key=True),
-                               db.Column('grade_id', db.Integer, db.ForeignKey(
-                                   'grades.grade_id'), primary_key=True)
-                               )
-
 
 class SuperAdmin(db.Model):
 
@@ -149,10 +136,6 @@ class Student(db.Model):
 
     units = db.relationship('Unit', secondary=student_units_table,
                             back_populates='students', cascade='all')
-    assessments = db.relationship('Assessment', secondary=student_assessment_table,
-                                  back_populates='student', cascade='all')
-    grades = db.relationship('Grade', secondary=student_grade_table,
-                             back_populates='students', cascade='all')
     parent = db.relationship(
         'Parent', back_populates='student', uselist=False, single_parent=True)
     teacher = db.relationship(
@@ -249,10 +232,6 @@ class Assessment(db.Model):
     assessment_id = db.Column(db.Integer, primary_key=True)
     assessment_name = db.Column(db.String(255), nullable=False, index=True)
     unit_id = db.Column(db.Integer, db.ForeignKey('units.unit_id'))
-    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
-
-    student = db.relationship('Student', secondary=student_assessment_table,
-                               back_populates='assessments', cascade='all')
 
     def __repr__(self):
         return f'Assessment: {self.assessment_name} ID:{self.assessment_id}'
@@ -263,17 +242,14 @@ class Grade(db.Model):
     __tablename__ = 'grades'
 
     grade_id = db.Column(db.Integer, primary_key=True)
-    grade = db.Column(db.String(10), nullable=False)
-    assessment_id = db.Column(
-        db.Integer, db.ForeignKey('assessments.assessment_id'))
-    
-    assessment = db.relationship("Assessment" , backref="grade")
+    student_id = db.Column(db.Integer, db.ForeignKey(
+        'students.student_id'), nullable=False)
+    assessment_id = db.Column(db.Integer, db.ForeignKey(
+        'assessments.assessment_id', ondelete='CASCADE'))
+    score = db.Column(db.Integer, nullable=False)
 
-    students = db.relationship('Student', secondary=student_grade_table,
-                               back_populates='grades', cascade='all',)
-
-    def __repr__(self):
-        return f'Grade: {self.grade} ID:{self.grade_id}'
+    student = db.relationship('Student', backref='student_assessment')
+    assessment = db.relationship('Assessment', backref='student_assessment')
 
 
 class Payment(db.Model):
