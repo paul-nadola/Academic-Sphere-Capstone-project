@@ -54,6 +54,8 @@ class StudentSchema(SQLAlchemyAutoSchema):
     email = fields.String(attribute='users.email')
     user_id = fields.String(attribute='users.id')
     parent = fields.Nested("ParentSchema", exclude=("student",))
+    student_assessment = fields.Nested(
+        "GradeSchema", many=True, only=("assessment", "score",))
 
 
 class ParentSchema(SQLAlchemyAutoSchema):
@@ -91,7 +93,8 @@ class UnitSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Unit
         load_instance = True
-    course = fields.Nested("CourseSchema", only=("course_name",))
+    # course = fields.Nested("CourseSchema", only=("course_name",))
+    course = fields.Function(lambda obj: obj.course.course_name)
 
 
 class AssessmentSchema(SQLAlchemyAutoSchema):
@@ -99,11 +102,19 @@ class AssessmentSchema(SQLAlchemyAutoSchema):
         model = Assessment
         load_instance = True
 
+    student_assessment = fields.Nested(
+        "GradeSchema", many=True, only=("student", "score",))
+    # unit = fields.Nested(UnitSchema, only=("unit_name",))
+    unit = fields.Function(lambda obj: obj.unit.unit_name)
+
 
 class GradeSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Grade
         load_instance = True
+
+    student = fields.Function(lambda obj: obj.student.first_name)
+    assessment = fields.Function(lambda obj: obj.assessment.assessment_name)
 
 
 class PaymentSchema(SQLAlchemyAutoSchema):
@@ -124,6 +135,9 @@ class StudentAttendanceSchema(SQLAlchemyAutoSchema):
         model = StudentAttendance
         load_instance = True
 
+    # student = fields.Nested(StudentSchema, only=("first_name",))
+    student = fields.Function(lambda obj: obj.student.first_name)
+
 
 class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -134,6 +148,7 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
 
 
 userSchema = UserSchema()
+superAdminSchema = SuperAdminSchema()
 teacherSchema = TeacherSchema()
 adminSchema = AdminSchema()
 studentSchema = StudentSchema()
@@ -205,10 +220,12 @@ def handle_users():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        current = SuperAdmin.query.filter_by(user_id=user.id).first()
         teachers = Teacher.query.all()
         admins = Admin.query.all()
 
-        return jsonify(admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
+        return jsonify(current=superAdminSchema.dump(current),
+                       admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
         data = request.get_json()
@@ -325,11 +342,13 @@ def admin_create():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        current = Admin.query.filter_by(user_id=user.id).first()
         teachers = Teacher.query.all()
         students = Student.query.all()
         parents = Parent.query.all()
 
-        return jsonify(teachers=teacherSchema.dump(teachers, many=True),
+        return jsonify(current=adminSchema.dump(current),
+                       teachers=teacherSchema.dump(teachers, many=True),
                        students=studentSchema.dump(students, many=True),
                        parents=parentSchema.dump(parents, many=True)
                        )
@@ -548,15 +567,165 @@ def admin_course(id):
 def admin_unit(id):
     pass
 
+
 @app.route('/admin_teacherattendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @admin_resource(TeacherAttendance, teacherAttendanceSchema, 'attendance')
 def admin_teacherattendance(id):
     pass
 
+
 @app.route('/admin_leave/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @admin_resource(LeaveOfAbsence, leaveOfAbsenceSchema, 'leave')
 def admin_leave(id):
     pass
+
+
+@app.route('/teacher', methods=['GET', 'POST'])
+@jwt_required()
+def teacher():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'teacher':
+        return {"msg": "Unauthorized"}
+
+    if request.method == 'GET':
+        current = Teacher.query.filter_by(user_id=user.id).first()
+        units = Unit.query.all()
+        students = Student.query.all()
+        assessments = Assessment.query.all()
+        grades = Grade.query.all()
+        std_attendance = StudentAttendance.query.all()
+
+        return jsonify(current=teacherSchema.dump(current), units=unitSchema.dump(units, many=True),
+                       students=studentSchema.dump(students, many=True),
+                       assessments=assessmentSchema.dump(
+                           assessments, many=True),
+                       grades=gradeSchema.dump(grades, many=True),
+                       std_attendance=studentAttendanceSchema.dump(
+                           std_attendance, many=True)
+                       )
+
+
+@app.route('/teacher/<string:name>', methods=['POST'])
+@jwt_required()
+def teacher_post(name):
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'teacher':
+        return {"msg": "Unauthorized"}
+
+    if request.method == 'POST':
+        data = request.get_json()
+
+        if name == "assessment":
+            ass = Assessment(**data)
+
+            db.session.add(ass)
+            db.session.commit()
+
+            return jsonify(data=assessmentSchema.dump(ass)), 200
+
+        if name == "grades":
+            for datum in data:
+                grades = Grade(**datum)
+
+                db.session.add(grades)
+                db.session.commit()
+
+            return {"msg": "grading done"}, 200
+
+        if name == "attendance":
+            for datum in data:
+                attendance = StudentAttendance(**datum)
+
+                db.session.add(attendance)
+                db.session.commit()
+
+            return {"msg": "Attendance marked"}, 200
+
+
+def teacher_resource(resource_model, resource_schema, resource_name):
+    def decorator(func):
+        @wraps(func)
+        @jwt_required()
+        def wrapper(id):
+            token_data = get_jwt_identity()
+            user_email = token_data['email']
+            user = User.query.filter_by(email=user_email).first()
+            if user.user_type.lower() != 'teacher':
+                return {"msg": "Unauthorized"}
+
+            res_id = resource_name + '_id'
+            resource = resource_model.query.filter_by(**{res_id: id}).first()
+
+            if not resource:
+                return {"msg": f"{resource_name} does not exist"}, 400
+
+            if request.method == 'GET':
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'PATCH':
+                data = request.get_json()
+                for key, value in data.items():
+                    setattr(resource, key, value)
+                db.session.commit()
+                return jsonify({resource_name: resource_schema.dump(resource)}), 200
+
+            if request.method == 'DELETE':
+                db.session.delete(resource)
+                db.session.commit()
+                return {"msg": f"{resource_name} deleted successfully"}, 200
+
+        return wrapper
+    return decorator
+
+
+@app.route('/teacher_assessment/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(Assessment, assessmentSchema, 'assessment')
+def teacher_assessment(id):
+    pass
+
+
+@app.route('/teacher_grades/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(Grade, gradeSchema, 'grade')
+def teacher_grade(id):
+    pass
+
+
+@app.route('/teacher_attendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
+@teacher_resource(StudentAttendance, studentAttendanceSchema, 'attendance')
+def teacher_attendance(id):
+    pass
+
+
+@app.route('/student')
+@jwt_required()
+def student():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'student':
+        return {"msg": "Unauthorized"}
+
+    student = Student.query.filter_by(user_id=user.id).first()
+
+    return jsonify(student=studentSchema.dump(student)), 200
+
+
+@app.route('/parent')
+@jwt_required()
+def parent():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'parent':
+        return {"msg": "Unauthorized"}
+
+    parent = Parent.query.filter_by(user_id=user.id).first()
+
+    return jsonify(parent=parentSchema.dump(parent)), 200
 
 
 if __name__ == "__main__":
