@@ -148,6 +148,7 @@ class LeaveOfAbsenceSchema(SQLAlchemyAutoSchema):
 
 
 userSchema = UserSchema()
+superAdminSchema = SuperAdminSchema()
 teacherSchema = TeacherSchema()
 adminSchema = AdminSchema()
 studentSchema = StudentSchema()
@@ -219,10 +220,12 @@ def handle_users():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        current = SuperAdmin.query.filter_by(user_id=user.id).first()
         teachers = Teacher.query.all()
         admins = Admin.query.all()
 
-        return jsonify(admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
+        return jsonify(current=superAdminSchema.dump(current),
+                       admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
         data = request.get_json()
@@ -339,11 +342,13 @@ def admin_create():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        current = Admin.query.filter_by(user_id=user.id).first()
         teachers = Teacher.query.all()
         students = Student.query.all()
         parents = Parent.query.all()
 
-        return jsonify(teachers=teacherSchema.dump(teachers, many=True),
+        return jsonify(current=adminSchema.dump(current),
+                       teachers=teacherSchema.dump(teachers, many=True),
                        students=studentSchema.dump(students, many=True),
                        parents=parentSchema.dump(parents, many=True)
                        )
@@ -585,13 +590,14 @@ def teacher():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        current = Teacher.query.filter_by(user_id=user.id).first()
         units = Unit.query.all()
         students = Student.query.all()
         assessments = Assessment.query.all()
         grades = Grade.query.all()
         std_attendance = StudentAttendance.query.all()
 
-        return jsonify(units=unitSchema.dump(units, many=True),
+        return jsonify(current=teacherSchema.dump(current), units=unitSchema.dump(units, many=True),
                        students=studentSchema.dump(students, many=True),
                        assessments=assessmentSchema.dump(
                            assessments, many=True),
@@ -706,6 +712,7 @@ def student():
     student = Student.query.filter_by(user_id=user.id).first()
 
     return jsonify(student=studentSchema.dump(student)), 200
+
 
 @app.route('/parent')
 @jwt_required()
