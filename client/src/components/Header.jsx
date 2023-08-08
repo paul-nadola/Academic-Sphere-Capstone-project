@@ -2,8 +2,10 @@ import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import icon from "../assets/icon.png";
 import { ProjectContext } from "./Context";
+import {  useNavigate } from 'react-router-dom'
 
 const Header = () => {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(ProjectContext);
   return (
     <>
@@ -30,7 +32,10 @@ const Header = () => {
           <div>
             <button
               onClick={() => {
-                sessionStorage.removeItem("token"), window.location.reload();
+                sessionStorage.removeItem("token")
+                navigate("/");
+                window.location.reload()
+                
               }}
               className="hover:text-red-500"
             >

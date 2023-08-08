@@ -10,9 +10,12 @@ import SignIn from "./components/SignIn";
 import ParentsPage from "./components/ParentsPage";
 import StudentsPage from "./components/StudentsPage";
 import Login from "./components/Login";
-import Nav from "./components/Nav";
-import Teachers from "./components/Teachers";
+import SuperAdmin from "./components/SuperAdmin";
+// import Nav from "./components/Nav";
+// import Teachers from "./components/Teachers";
 import Header from "./components/Header";
+import TeachersPage from "./components/Teachers";
+import Admin from "./components/Admin";
 
 function App() {
   return (
@@ -23,15 +26,18 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/departments" element={<Departments />} />
           <Route path="/about" element={<About />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/departments" element={<Departments />} />
           <Route path="/technology" element={<Technology />} />
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
-          <Route path="/parents" element={<ParentsPage />} />
+          <Route path="/superadmin" element={<SuperAdmin />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/students" element={<StudentsPage />} />
+          <Route path="/teachers" element={<TeachersPage />} />
+          <Route path="/parents" element={<ParentsPage />} />
         </Routes>
       </div>
     </div>

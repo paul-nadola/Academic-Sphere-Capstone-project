@@ -1,8 +1,10 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { ProjectContext } from "./Context";
+import {  useNavigate } from 'react-router-dom'
 
 function SignIn() {
+  const navigate = useNavigate();
   const { state, dispatch } = useContext(ProjectContext);
   const [formData, setFormData] = useState({
     email: "",
@@ -20,7 +22,7 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://127.0.0.1:5555/login", {
+      const response = await fetch("https://academic-sphere-tables.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,6 +34,28 @@ function SignIn() {
       console.log(data.token);
       dispatch({ type: "SET_USER", payload: data.user });
       sessionStorage.setItem("token", data.token);
+      console.log(data.token);
+      if(data.user.user_type === "superadmin"){
+          console.log(data.user.user_type)
+        navigate("/superadmin")
+      }
+      else if(data.user.user_type === "admin"){
+          console.log(data.user.user_type)
+        navigate("/admin")
+      }
+      else if(data.user.user_type === "student"){
+          console.log(data.user.user_type)
+        navigate("/students")
+      }
+      else if(data.user.user_type === "teacher"){
+          console.log(data.user.user_type)
+        navigate("/teachers")
+      }
+      else if(data.user.user_type === "parent"){
+          console.log(data.user.user_type)
+        navigate("/parents")
+      }
+      
     } catch (error) {
       // display an error message to the user.
       console.error("Error:", error);
