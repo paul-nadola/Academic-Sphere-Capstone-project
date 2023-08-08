@@ -14,7 +14,6 @@ function StudentsPage() {
       });
   }, []);
 
-function StudentsPage() {
   return (
     <div>
      
