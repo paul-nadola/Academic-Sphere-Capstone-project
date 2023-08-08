@@ -12,9 +12,9 @@ import StudentsPage from "./components/StudentsPage";
 import Login from "./components/Login";
 import SuperAdmin from "./components/SuperAdmin";
 // import Nav from "./components/Nav";
-// import Teachers from "./components/Teachers";
 import Header from "./components/Header";
 import TeachersPage from "./components/Teachers";
+import Teachers from "./components/Teachers";
 import Admin from "./components/Admin";
 
 function App() {
@@ -37,6 +37,7 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/teachers" element={<TeachersPage />} />
+          <Route path="/teacher" element={<Teachers />} />
           <Route path="/parents" element={<ParentsPage />} />
         </Routes>
       </div>
