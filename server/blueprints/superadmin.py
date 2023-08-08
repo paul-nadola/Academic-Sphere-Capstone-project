@@ -1,7 +1,7 @@
 from flask import jsonify, request, Blueprint
 from models import User, Teacher, Admin, SuperAdmin
 from flask_jwt_extended import get_jwt_identity, jwt_required
-from schemas import adminSchema, superAdminSchema,teacherSchema
+from schemas import adminSchema, superAdminSchema,teacherSchema, userSchema
 from config import db
 
 superadmin_bp = Blueprint("superadmin", __name__)
@@ -21,11 +21,13 @@ def handle_users():
         return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
+        users = User.query.all()
         current = SuperAdmin.query.filter_by(user_id=user.id).first()
         teachers = Teacher.query.all()
         admins = Admin.query.all()
 
-        return jsonify(current=superAdminSchema.dump(current),
+        return jsonify(users = userSchema.dump(users, many=True) ,
+            current=superAdminSchema.dump(current),
                        admins=adminSchema.dump(admins, many=True), teachers=teacherSchema.dump(teachers, many=True))
 
     if request.method == 'POST':
