@@ -23,6 +23,7 @@ flask-jwt-extended = "*"
 faker = "*"
 marshmallow-sqlalchemy = "*"
 marshmallow = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

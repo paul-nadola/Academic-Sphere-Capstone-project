@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import pic from "../assets/login.jpg";
 import SignIn from "./SignIn";
 import Footer from "./Footer";
+import { ProjectContext } from "./Context";
 
 function Home() {
-  const [showFullText, setShowFullText] = useState(false);
+  const { state, dispatch } = useContext(ProjectContext);
 
   const toggleText = () => {
     setShowFullText((prevShowFullText) => !prevShowFullText);
   };
-
+  console.log(state.token);
   return (
     <div className="min-h-[80vh]">
       <div className="text-center text-xl text-pri1 py-10 mb-10 ">
