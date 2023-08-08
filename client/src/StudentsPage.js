@@ -1,5 +1,18 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+
+function StudentsPage() {
+  const [studentData, setStudentData] = useState({});
+
+  useEffect(() => {
+    // Fetch student data from the backend API
+    fetch('/api/student')
+      .then(response => response.json())
+      .then(data => setStudentData(data))
+      .catch(error => {
+        console.error('Error fetching student data:', error);
+      });
+  }, []);
 
 function StudentsPage() {
   return (
@@ -96,4 +109,4 @@ function StudentsPage() {
   )
 }
 
-export default StudentsPage
+export default StudentsPage;
