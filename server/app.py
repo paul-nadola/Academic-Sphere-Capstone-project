@@ -576,13 +576,13 @@ def admin_leave(id):
 
 
 @app.route('/teacher', methods=['GET', 'POST'])
-# @jwt_required()
+@jwt_required()
 def teacher():
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'teacher':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'teacher':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'GET':
         units = Unit.query.all()
@@ -602,13 +602,13 @@ def teacher():
 
 
 @app.route('/teacher/<string:name>', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def teacher_post(name):
-    # token_data = get_jwt_identity()
-    # user_email = token_data['email']
-    # user = User.query.filter_by(email=user_email).first()
-    # if user.user_type.lower() != 'teacher':
-    #     return {"msg": "Unauthorized"}
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'teacher':
+        return {"msg": "Unauthorized"}
 
     if request.method == 'POST':
         data = request.get_json()
@@ -638,17 +638,18 @@ def teacher_post(name):
                 db.session.commit()
 
             return {"msg": "Attendance marked"}, 200
-        
+
+
 def teacher_resource(resource_model, resource_schema, resource_name):
     def decorator(func):
         @wraps(func)
-        # @jwt_required()
+        @jwt_required()
         def wrapper(id):
-            # token_data = get_jwt_identity()
-            # user_email = token_data['email']
-            # user = User.query.filter_by(email=user_email).first()
-            # if user.user_type.lower() != 'teacher':
-            #     return {"msg": "Unauthorized"}
+            token_data = get_jwt_identity()
+            user_email = token_data['email']
+            user = User.query.filter_by(email=user_email).first()
+            if user.user_type.lower() != 'teacher':
+                return {"msg": "Unauthorized"}
 
             res_id = resource_name + '_id'
             resource = resource_model.query.filter_by(**{res_id: id}).first()
@@ -674,20 +675,51 @@ def teacher_resource(resource_model, resource_schema, resource_name):
         return wrapper
     return decorator
 
+
 @app.route('/teacher_assessment/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @teacher_resource(Assessment, assessmentSchema, 'assessment')
 def teacher_assessment(id):
     pass
+
 
 @app.route('/teacher_grades/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @teacher_resource(Grade, gradeSchema, 'grade')
 def teacher_grade(id):
     pass
 
+
 @app.route('/teacher_attendance/<int:id>', methods=['GET', 'PATCH', 'DELETE'])
 @teacher_resource(StudentAttendance, studentAttendanceSchema, 'attendance')
 def teacher_attendance(id):
     pass
+
+
+@app.route('/student')
+@jwt_required()
+def student():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'student':
+        return {"msg": "Unauthorized"}
+
+    student = Student.query.filter_by(user_id=user.id).first()
+
+    return jsonify(student=studentSchema.dump(student)), 200
+
+@app.route('/parent')
+@jwt_required()
+def parent():
+    token_data = get_jwt_identity()
+    user_email = token_data['email']
+    user = User.query.filter_by(email=user_email).first()
+    if user.user_type.lower() != 'parent':
+        return {"msg": "Unauthorized"}
+
+    parent = Parent.query.filter_by(user_id=user.id).first()
+
+    return jsonify(parent=parentSchema.dump(parent)), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5555)
