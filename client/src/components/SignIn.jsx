@@ -35,26 +35,27 @@ function SignIn() {
       dispatch({ type: "SET_USER", payload: data.user });
       sessionStorage.setItem("token", data.token);
       console.log(data.token);
-      if(data.user.user_type == "superadmin"){
+      if(data.user.user_type === "superadmin"){
           console.log(data.user.user_type)
         navigate("/superadmin")
       }
-      else if(data.user.user_type == "admin"){
+      else if(data.user.user_type === "admin"){
           console.log(data.user.user_type)
         navigate("/admin")
       }
-      else if(data.user.user_type == "student"){
+      else if(data.user.user_type === "student"){
           console.log(data.user.user_type)
         navigate("/students")
       }
-      else if(data.user.user_type == "teacher"){
+      else if(data.user.user_type === "teacher"){
           console.log(data.user.user_type)
         navigate("/teachers")
       }
-      else if(data.user.user_type == "parent"){
+      else if(data.user.user_type === "parent"){
           console.log(data.user.user_type)
         navigate("/parents")
       }
+      
     } catch (error) {
       // display an error message to the user.
       console.error("Error:", error);
