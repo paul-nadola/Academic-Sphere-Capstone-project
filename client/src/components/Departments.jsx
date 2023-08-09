@@ -5,28 +5,11 @@ function Departments() {
   return (
     <>
     <div className="flex justify-evenly">
-            <button className='mt-4'>
-            <Link
-              to="/departments"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
-            >
-              Departments
-            </Link>
-            </button>
-            
-            <button className='mt-4'>
-            <Link
-              to="/parents"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
-            >
-              Parent Page
-            </Link>
-            </button>
             
             <button className='mt-4'>
             <Link
               to="/about"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 text-center"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               About
             </Link>
@@ -35,7 +18,7 @@ function Departments() {
             <button className="mt-4">
             <Link
               to="/signin"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               Sign Out
             </Link>
@@ -46,6 +29,7 @@ function Departments() {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}>
+        <hr/>
       <div className='h-70vh w-90vw flex flex-col items-center'>
       <h1 className="text-4xl font-bold">Departments</h1>
       <p>
@@ -56,7 +40,7 @@ function Departments() {
           <button className="mt-4">
             <Link
               to="/technology"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="block bg-pri1 text-white py-2 px-4 rounded hover:bg-pri2 transition duration-300 w-full text-center"
             >
               TECHNOLOGY
             </Link>
@@ -66,7 +50,7 @@ function Departments() {
           <button className="mt-4">
             <Link
               to="/social-sciences"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="block bg-pri1 text-white py-2 px-4 rounded hover:bg-pri2 transition duration-300 w-full text-center"
             >
               SOCIAL SCIENCES
             </Link>
@@ -76,7 +60,7 @@ function Departments() {
           <button className="mt-4">
             <Link
               to="/engineering"
-              className="block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+              className="block bg-pri1 text-white py-2 px-4 rounded hover:bg-pri2 transition duration-300 w-full text-center"
             >
               ENGINEERING
             </Link>
