@@ -72,11 +72,11 @@ function Teachers() {
     <>
     <button className='mt-4'>
             <Link
-              to="/superadmin/teachers_data"
+              to="/superadmin"
               className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               
-              TBack To dDashboard
+              Back To Dashboard
             </Link>
             </button>
     <div className="create-teacheruser">
