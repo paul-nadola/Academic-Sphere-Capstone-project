@@ -11,6 +11,8 @@ import ParentsPage from "./components/ParentsPage";
 import StudentsPage from "./components/StudentsPage";
 import Login from "./components/Login";
 import SuperAdmin from "./components/SuperAdmin";
+import AdminsGet from "./components/AdminsGet";
+import Teachers from "./components/Teachers";
 // import Nav from "./components/Nav";
 // import Teachers from "./components/Teachers";
 import Header from "./components/Header";
@@ -34,6 +36,8 @@ function App() {
           <Route path="/social-sciences" element={<SocialSciences />} />
           <Route path="/engineering" element={<Engineering />} />
           <Route path="/superadmin" element={<SuperAdmin />} />
+          <Route path="/superadmin/admins_data" element={<AdminsGet />} />
+          <Route path="/superadmin/teachers_data" element={<Teachers />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/teachers" element={<TeachersPage />} />

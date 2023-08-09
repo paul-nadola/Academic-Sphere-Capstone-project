@@ -1,40 +1,13 @@
-import React ,{useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Teachers from './Teachers'
+// import AdminsGet from './AdminsGet'
 
-function Admin() {
-    const[admin, setAdmin] = useState([])
-    const [teachers, setTeachers] = useState([]);
 
-  useEffect(() => {
-    const getTeachers = async () => {
-      try {
-        const token = sessionStorage.getItem('token');
-        console.log('Token used:', token);
-        const response = await fetch(
-          'https://academic-sphere-tables.onrender.com/superadmin_create',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, 
-            },
-          }
-        );
-
-        if (!response.ok) {
-          console.error('Failed to fetch teachers:', response.status);
-          return;
-        }
-
-        const data = await response.json();
-        setTeachers(data.teachers);
-      } catch (error) {
-        console.error('Error fetching teachers:', error);
-      }
-    };
-
-    getTeachers();
-  }, []);
-
-  useEffect(() => {
-    const getAdmins = async () => {
+function SuperAdmin() {
+      const[currentUser, setCurrentUser] = useState([])
+    useEffect(() => {
+    const getUser = async () => {
       try {
         const token = sessionStorage.getItem('token');
         console.log('Token used:', token);
@@ -48,40 +21,55 @@ function Admin() {
         );
 
         if (!response.ok) {
-          console.error('Failed to fetch admin:', response.status);
+          console.error('Failed to fetch current user:', response.status);
           return;
         }
 
         const data = await response.json();
-        setAdmin(data.teachers);
+        setCurrentUser(data.current);
       } catch (error) {
-        console.error('Error fetching admin:', error);
+        console.error('Error fetching teachers:', error);
       }
     };
 
-    getAdmins();
+    getUser();
   }, []);
   return (
     <div>
-        {teachers.map((teacher) => (
-        <div className="teacher-container" key={teacher.teacher_id}>
-          <h3>Teacher Name: {teacher.first_name}</h3>
-          <p>Last Name: {teacher.last_name}</p>
-          <p>Phone Number: {teacher.phone_number}</p>
-          <p>Email: {teacher.email}</p>
+      <div className="flex justify-evenly">
+      <button className='mt-4'>
+            <Link
+              to="/superadmin/teachers_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              Teachers Data
+            </Link>
+            </button>
+            <button className='mt-4'>
+            <Link
+              to="/superadmin/admins_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              Admins Data
+            </Link>
+            </button>
+      </div>
+      
+        <div className="user-container" >
+          <h3>First Name: {currentUser.first_name}</h3>
+          <p>Last Name: {currentUser.last_name}</p>
+          <p>Date of Birth: {currentUser.DOB}</p>
+          <p>Phone Number: {currentUser.phone_number}</p>
+          <p>Email: {currentUser.email}</p>
+          <p>Address: {currentUser.address}</p>
+          <p>Employment Date: {currentUser.employment_date}</p>
         </div>
-      ))}
-      {admin.map((adm) => (
-        <div className="teacher-container" key={adm.admin_id}>
-          <h3>Admin Name: {adm.first_name}</h3>
-          <p>Last Name: {adm.last_name}</p>
-          <p>Phone Number: {adm.phone_number}</p>
-          <p>Email: {adm.email}</p>
-        </div>
-      ))}
-
+      {/* <AdminsGet/> */}
+      {/* <Teachers/> */}
     </div>
   )
 }
 
-export default Admin
+export default SuperAdmin
