@@ -70,15 +70,14 @@ function Teachers() {
   });
   return (
     <>
-    <button className='mt-4'>
-            <Link
-              to="/superadmin"
-              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
-            >
-              
-              Back To Dashboard
-            </Link>
-            </button>
+  <button className='mt-4'>
+    <Link
+      to="/superadmin"
+      className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+    >
+      Back To Dashboard
+    </Link>
+  </button>
     <div className="create-teacheruser">
       <h1>CREATE A NEW TEACHER</h1>
       <form className="teacher-form" onSubmit={handleSubmit}>
@@ -106,32 +105,29 @@ function Teachers() {
       </form>
       </div>
       <div className="table-container">
-  <h1><b>TEACHERS</b></h1>
-  <table className="teacher-table table-auto w-full mt-4 bg-white p-4 text-pri2">
-    <thead>
-      <tr>
-        <th className='border px-4 py-2'>First Name</th>
-        <th className='border px-4 py-2'>Last Name</th>
-        <th className='border px-4 py-2'>Phone Number</th>
-        <th className='border px-4 py-2'>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      {teachers.map((teacher) => (
-        <tr className="teacher-row table-auto w-full mt-4 bg-white p-4 text-pri2" key={teacher.teacher_id}>
-          <td className='border px-4 py-2'>{teacher.first_name}</td>
-          <td className='border px-4 py-2'>{teacher.last_name}</td>
-          <td className='border px-4 py-2'>{teacher.phone_number}</td>
-          <td className='border px-4 py-2'>{teacher.email}</td>
+    <h1><b>TEACHERS</b></h1>
+    <table className="teacher-table table-auto w-full mt-4 bg-white p-4 text-pri2">
+      <thead>
+        <tr>
+          <th className='border px-4 py-2'>First Name</th>
+          <th className='border px-4 py-2'>Last Name</th>
+          <th className='border px-4 py-2'>Phone Number</th>
+          <th className='border px-4 py-2'>Email</th>
         </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-    </div>
-    </>
-    
+      </thead>
+      <tbody>
+        {teachers.map((teacher) => (
+          <tr className="teacher-row table-auto w-full mt-4 bg-white p-4 text-pri2" key={teacher.teacher_id}>
+            <td className='border px-4 py-2'>{teacher.first_name}</td>
+            <td className='border px-4 py-2'>{teacher.last_name}</td>
+            <td className='border px-4 py-2'>{teacher.phone_number}</td>
+            <td className='border px-4 py-2'>{teacher.email}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</>
   )
 }
 

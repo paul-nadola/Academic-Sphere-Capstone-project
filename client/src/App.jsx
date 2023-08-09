@@ -16,7 +16,7 @@ import Teachers from "./components/Teachers";
 // import Nav from "./components/Nav";
 import Header from "./components/Header";
 import TeachersPage from "./components/Teachers";
-import Teachers from "./components/Teachers";
+// import Teachers from "./components/Teachers";
 import Admin from "./components/Admin";
 
 function App() {
