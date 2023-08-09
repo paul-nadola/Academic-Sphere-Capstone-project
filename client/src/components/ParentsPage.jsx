@@ -1,7 +1,36 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function ParentsPage() {
+      const[currentUser, setCurrentUser] = useState([])
+    useEffect(() => {
+    const getUser = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        console.log('Token used:', token);
+        const response = await fetch(
+          'https://academic-sphere-tables.onrender.com/admin_create',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error('Failed to fetch current user:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        setCurrentUser(data.current);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
   return (
     <div>
       <div className="flex justify-evenly">
@@ -33,11 +62,14 @@ function ParentsPage() {
       </div>
         
           <div className="grid grid-cols-3 gap-4">
-      <div className="p-4 border bg-red-800">
-        <h3>DAVID JACKSON</h3>
-        <h4><b>Phone Number:</b> 0944244</h4>
-        <h4><b>Email:</b> djackson@gmail.com</h4>
-        <h4><b>Address:</b> P.O Box 464 Tokyo, Japan</h4>
+      <div className="user-container">
+        <h3>First Name: {currentUser.first_name}</h3>
+          <p>Last Name: {currentUser.last_name}</p>
+          <p>Date of Birth: {currentUser.DOB}</p>
+          <p>Phone Number: {currentUser.phone_number}</p>
+          <p>Email: {currentUser.email}</p>
+          <p>Address: {currentUser.address}</p>
+          <p>Employment Date: {currentUser.employment_date}</p>
       </div>
       <div className="p-4 border bg-blue-800">
         <h3>Student Details</h3>

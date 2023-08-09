@@ -26,7 +26,7 @@ function SuperAdmin() {
         const data = await response.json();
         setCurrentUser(data.current);
       } catch (error) {
-        console.error('Error fetching teachers:', error);
+        console.error('Error fetching current user:', error);
       }
     };
 

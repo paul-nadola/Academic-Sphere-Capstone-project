@@ -96,10 +96,15 @@ function Teachers() {
       <h1>TEACHERS</h1>
         {teachers.map((teacher) => (
         <div className="teacher-container" key={teacher.teacher_id}>
+
           <h3>First Name: {teacher.first_name}</h3>
           <p>Last Name: {teacher.last_name}</p>
-          <p>Phone Number: {teacher.phone_number}</p>
+          <p>Date of Birth: {teacher.DOB}</p>
           <p>Email: {teacher.email}</p>
+          <p>Phone Number: {teacher.phone_number}</p>
+          <p>Address: {teacher.address}</p>
+          <p>Employment Date: {teacher.employment_date}</p>
+          <p>Appraisal: {teacher.appraisal}</p>
         </div>
       ))}
     </div>

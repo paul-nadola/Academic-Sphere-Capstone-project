@@ -99,8 +99,12 @@ function AdminsGet() {
         <div className="admin-container" key={adm.admin_id}>
           <h3>First Name: {adm.first_name}</h3>
           <p>Last Name: {adm.last_name}</p>
-          <p>Phone Number: {adm.phone_number}</p>
+          <p>Date of Birth: {adm.DOB}</p>
           <p>Email: {adm.email}</p>
+          <p>Phone Number: {adm.phone_number}</p>
+          <p>Address: {adm.address}</p>
+          <p>Employment Date: {adm.employment_date}</p>
+          <p>Appraisal: {adm.appraisal}</p>
         </div>
       ))}
     </div>
