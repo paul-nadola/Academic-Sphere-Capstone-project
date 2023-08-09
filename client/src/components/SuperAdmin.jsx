@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Teachers from './Teachers'
-import AdminsGet from './AdminsGet'
+// import AdminsGet from './AdminsGet'
+
 
 function SuperAdmin() {
       const[currentUser, setCurrentUser] = useState([])
@@ -34,6 +36,27 @@ function SuperAdmin() {
   }, []);
   return (
     <div>
+      <div className="flex justify-evenly">
+      <button className='mt-4'>
+            <Link
+              to="/superadmin/teachers_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              Teachers Data
+            </Link>
+            </button>
+            <button className='mt-4'>
+            <Link
+              to="/superadmin/admins_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              Admins Data
+            </Link>
+            </button>
+      </div>
+      
         <div className="user-container" >
           <h3>First Name: {currentUser.first_name}</h3>
           <p>Last Name: {currentUser.last_name}</p>
@@ -43,8 +66,8 @@ function SuperAdmin() {
           <p>Address: {currentUser.address}</p>
           <p>Employment Date: {currentUser.employment_date}</p>
         </div>
-      <AdminsGet/>
-      <Teachers/>
+      {/* <AdminsGet/> */}
+      {/* <Teachers/> */}
     </div>
   )
 }

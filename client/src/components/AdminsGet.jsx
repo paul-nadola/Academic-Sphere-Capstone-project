@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
+import { Link } from 'react-router-dom';
 
 
 function AdminsGet() {
@@ -69,6 +70,16 @@ function AdminsGet() {
     },
   });
   return (
+    <>
+    <button className='mt-4'>
+            <Link
+              to="/superadmin/admins_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              Admins Data
+            </Link>
+            </button>
     <div className="create-adminuser">
       <h1>CREATE A NEW ADMIN</h1>
       <form className="admin-form" onSubmit={handleSubmit}>
@@ -104,6 +115,8 @@ function AdminsGet() {
         </div>
       ))}
     </div>
+    </>
+    
   )
 }
 

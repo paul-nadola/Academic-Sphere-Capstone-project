@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
+import { Link } from 'react-router-dom';
 
 
 function Teachers() {
@@ -68,6 +69,16 @@ function Teachers() {
     },
   });
   return (
+    <>
+    <button className='mt-4'>
+            <Link
+              to="/superadmin/teachers_data"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
+            >
+              
+              TBack To dDashboard
+            </Link>
+            </button>
     <div className="create-teacheruser">
       <h1>CREATE A NEW TEACHER</h1>
       <form className="teacher-form" onSubmit={handleSubmit}>
@@ -103,6 +114,8 @@ function Teachers() {
         </div>
       ))}
     </div>
+    </>
+    
   )
 }
 
