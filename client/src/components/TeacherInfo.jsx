@@ -9,7 +9,7 @@ function TeacherInfo() {
     <div className="mt-4">
   <Link
     to="/"
-    className='block bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center'
+    className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
   >
     Home
   </Link>
@@ -18,7 +18,7 @@ function TeacherInfo() {
         <button className='mt-4'>
             <Link
               to="/departments"
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               Departments
             </Link>
@@ -26,7 +26,7 @@ function TeacherInfo() {
       <button className='mt-4'>
             <Link
               to="/about"
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               About
             </Link>
@@ -35,7 +35,7 @@ function TeacherInfo() {
         <button className='mt-4'>
             <Link
               to="/studentinfo"
-              className="flex items-center justify-center bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 mr-4"
+              className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               Students
             </Link>
@@ -43,7 +43,7 @@ function TeacherInfo() {
         </div>
             <div className="mt-4">
   <button
-    className="block bg-black text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-300 w-full text-center"
+    className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
   >
     <Link to="/signin">Sign Out</Link>
   </button>
