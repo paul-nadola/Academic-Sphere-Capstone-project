@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function ParentsPage() {
-  const [parentData, setParentData] = useState({});
-  const [studentData, setStudentData] = useState({});
-  const [feeData, setFeeData] = useState({});
+  const [parentData, setParentData] = useState([]);
+  const [studentData, setStudentData] = useState([]);
+  const [feeData, setFeeData] = useState([]);
   
   useEffect(() => {
-    
     fetch('https://api.example.com/parentData')
       .then(response => response.json())
       .then(data => setParentData(data));
@@ -20,6 +19,7 @@ function ParentsPage() {
       .then(response => response.json())
       .then(data => setFeeData(data));
   }, []);
+
 
   return (
     <div>
@@ -58,30 +58,42 @@ function ParentsPage() {
         </button>
         </div>
 
-      <div className="p-4 space-x-4">
-        <div className="inline-block border rounded p-4 text-pri1">
-          <h3>{parentData.name}</h3>
-          <h4><b>Phone Number:</b> {parentData.phoneNumber}</h4>
-          <h4><b>Email:</b> {parentData.email}</h4>
-          <h4><b>Address:</b> {parentData.address}</h4>
+        <div className="p-4 space-x-4">
+        <div>
+          {parentData.map((parent, index) => (
+            <div key={index} className="inline-block border rounded p-4 text-pri1">
+              <h3>{parent.name}</h3>
+              <h4><b>Phone Number:</b> {parent.phoneNumber}</h4>
+              <h4><b>Email:</b> {parent.email}</h4>
+              <h4><b>Address:</b> {parent.address}</h4>
+            </div>
+          ))}
         </div>
         <br/>
         <hr/>
         <br/>
-        <div className="inline-block border rounded p-4 text-pri1">
+        <div>
+      {studentData.map((student, index) => (
+        <div key={index} className="inline-block border rounded p-4 text-pri1">
           <h3>Student Details</h3>
-          <h4><b>Name:</b> {studentData.name}</h4>
-          <h4><b>Phone Number:</b> {studentData.phoneNumber}</h4>
-          <h4><b>Email:</b> {studentData.email}</h4>
-          <h4><b>Department:</b> {studentData.Engineering}</h4>
-        <h4><b>Course:</b> {studentData.CivilEngineering}</h4>
+          <h4><b>Name:</b> {student.name}</h4>
+          <h4><b>Phone Number:</b> {student.phoneNumber}</h4>
+          <h4><b>Email:</b> {student.email}</h4>
+          <h4><b>Department:</b> {student.Engineering}</h4>
+          <h4><b>Course:</b> {student.CivilEngineering}</h4>
         </div>
-        <hr/>
-        <div className="inline-block border rounded p-4 text-pri1">
+      ))}
+
+      <hr />
+
+      {feeData.map((fee, index) => (
+        <div key={index} className="inline-block border rounded p-4 text-pri1">
           <h3>Fee Information</h3>
-          <h4><b>Fee Balance:</b> {feeData.balance}</h4>
-          <h4><b>Fee Paid:</b> {feeData.paid}</h4>
+          <h4><b>Fee Balance:</b> {fee.balance}</h4>
+          <h4><b>Fee Paid:</b> {fee.paid}</h4>
         </div>
+      ))}
+    </div>
         <div className="inline-block border rounded p-4 text-pri1 col-span-2">
           <h1>Inquiries</h1>
           {/* ... Inquiries ... */}
