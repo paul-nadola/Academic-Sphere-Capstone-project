@@ -31,10 +31,12 @@ function SignIn() {
       });
       const data = await response.json();
       // redirect to a new page on successful login.
-      console.log(data.token);
       dispatch({ type: "SET_USER", payload: data.user });
       sessionStorage.setItem("token", data.token);
+<<<<<<< HEAD
       console.log(data.token);
+=======
+>>>>>>> vola
       if(data.user.user_type === "superadmin"){
           console.log(data.user.user_type)
         navigate("/superadmin")

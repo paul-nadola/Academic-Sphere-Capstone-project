@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 
 function Admin() {
@@ -42,6 +43,13 @@ function Admin() {
           <p>Employment Date: {currentUser.employment_date}</p>
         </div>
     </div>
+=======
+import React from 'react'
+
+function Admin() {
+  return (
+    <div>Admin</div>
+>>>>>>> vola
   )
 }
 
