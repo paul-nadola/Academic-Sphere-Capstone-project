@@ -8,6 +8,8 @@ export default {
         pri2: "#872642",
         sec1: "#F6C026",
         sec2: "#A0D3F9",
+        sec3: "#dfdee0",
+        sec4: "#c9c5c9"
       },
     },
   },
