@@ -121,7 +121,7 @@ class Student(db.Model):
     __tablename__ = 'students'
 
     student_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
     DOB = db.Column(db.Date, nullable=False)
