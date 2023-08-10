@@ -124,10 +124,10 @@ class Student(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
-    DOB = db.Column(db.Date, nullable=False)
+    DOB = db.Column(db.String, nullable=False)
     address = db.Column(db.String(255), nullable=False)
     phone_number = db.Column(db.String(100), nullable=False)
-    enrollment_date = db.Column(db.Date, nullable=False)
+    enrollment_date = db.Column(db.String, nullable=False)
     department_id = db.Column(
         db.Integer, db.ForeignKey('departments.department_id'))
     course_id = db.Column(db.Integer, db.ForeignKey('courses.course_id'))

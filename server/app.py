@@ -362,7 +362,7 @@ def admin_create():
 
         user = User.query.filter_by(email=email).first()
         if user:
-            user = user
+            user = user # give feedback is user exists, and check corresponding profile
         else:
             user = User(user_name=user_name, email=email,
                         password_hash=password, user_type=user_type)
@@ -381,7 +381,7 @@ def admin_create():
                    'appraisal': data['appraisal']}
 
             teacher = Teacher(**obj)
-
+            
             db.session.add(teacher)
             db.session.commit()
 
