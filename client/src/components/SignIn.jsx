@@ -22,7 +22,7 @@ function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://academic-sphere-tables.onrender.com/login", {
+      const response = await fetch("http://127.0.0.1:5555/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,10 +31,8 @@ function SignIn() {
       });
       const data = await response.json();
       // redirect to a new page on successful login.
-      console.log(data.token);
       dispatch({ type: "SET_USER", payload: data.user });
       sessionStorage.setItem("token", data.token);
-      console.log(data.token);
       if(data.user.user_type === "superadmin"){
           console.log(data.user.user_type)
         navigate("/superadmin")
