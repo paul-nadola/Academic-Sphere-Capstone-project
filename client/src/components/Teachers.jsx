@@ -68,6 +68,23 @@ function Teachers() {
       createTeacher(values);
     },
   });
+
+  async function deleteTeacher(teacherId) {
+    try {
+      const token = sessionStorage.getItem('token');
+      await fetch(`https://academic-sphere-tables.onrender.com/superadmin_edit/${teacherId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+        // Update the teachers list after deletion
+        setTeachers(teachers.filter(teacher => teacher.teacher_id !== teacherId));
+      } catch (error) {
+        console.error('Error deleting teacher:', error);
+      }
+    }
   return (
     <>
     <button className='mt-4'>
@@ -102,7 +119,7 @@ function Teachers() {
         <input type="date" value={values.employment_date} onChange={handleChange} name="employment_date" /><br />
         <label htmlFor="appraisal">Enter User Appraisal : </label>
         <input type="number" value={values.appraisal} onChange={handleChange} name="appraisal" /><br />
-        <input className = "btn" type="submit" value="Create Teacher" /><br />
+        <input className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 max-w-xs" type="submit" value="Create Teacher" /><br />
       </form>
       <h1>TEACHERS</h1>
         {teachers.map((teacher) => (
@@ -116,6 +133,9 @@ function Teachers() {
           <p>Address: {teacher.address}</p>
           <p>Employment Date: {teacher.employment_date}</p>
           <p>Appraisal: {teacher.appraisal}</p>
+          <button className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 max-w-xs" onClick={() => deleteTeacher(teacher.teacher_id)}>delete</button>
+
+
         </div>
       ))}
     </div>

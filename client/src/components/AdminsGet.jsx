@@ -69,6 +69,23 @@ function AdminsGet() {
       createAdmin(values);
     },
   });
+
+  async function deleteAdmin(adminId) {
+    try {
+      const token = sessionStorage.getItem('token');
+      await fetch(`https://academic-sphere-tables.onrender.com/superadmin_edit/${adminId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+        // Update the teachers list after deletion
+        setAdmin(admin.filter(adm => adm.admin_id !== adminId));
+      } catch (error) {
+        console.error('Error deleting adm:', error);
+      }
+    }
   return (
     <>
     <button className='mt-4'>
@@ -103,9 +120,9 @@ function AdminsGet() {
         <input type="date" value={values.employment_date} onChange={handleChange} name="employment_date" /><br />
         <label htmlFor="appraisal">Enter User Appraisal : </label>
         <input type="number" value={values.appraisal} onChange={handleChange} name="appraisal" /><br />
-        <input className = "btn" type="submit" value="Create Admin" /><br />
+        <input className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 max-w-xs" type="submit" value="Create Admin" /><br />
       </form>
-      <h1>ADMINS</h1>
+      <h1>SCHOOL ADMINS</h1>
         {admin.map((adm) => (
         <div className="admin-container" key={adm.admin_id}>
           <h3>First Name: {adm.first_name}</h3>
@@ -116,6 +133,7 @@ function AdminsGet() {
           <p>Address: {adm.address}</p>
           <p>Employment Date: {adm.employment_date}</p>
           <p>Appraisal: {adm.appraisal}</p>
+          <button className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 max-w-xs" onClick={() => deleteAdmin(adm.admin_id)}>delete</button>
         </div>
       ))}
     </div>
@@ -238,7 +256,7 @@ export default AdminsGet
 //         <label htmlFor="user_type">Choose a user</label>
 //       <select name="user_type" className="user_type" value={values.user_type} onChange={handleChange}>
 //         <option value="admin" >admin</option>
-//         <option value="teacher">teacher</option>
+//         <option value="adm">teacher</option>
 //       </select>
 //       <br />
 //         <label htmlFor="first_name">Enter First Name: </label>
