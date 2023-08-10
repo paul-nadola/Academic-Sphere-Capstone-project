@@ -55,7 +55,7 @@ def handle_users():
                'address': data['address'],
                'phone_number': data['phone_number'],
                'employment_date': data['employment_date'],
-               'superadmin_bpraisal': data['superadmin_bpraisal']}
+               'appraisal': data['appraisal']}
 
         if user_type == 'admin':
             admin = Admin(**obj)
