@@ -1,16 +1,11 @@
 import React, { useContext, useState } from "react";
 import pic from "../assets/login.jpg";
-import SignIn from "./SignIn";
-import Footer from "./Footer";
-import { ProjectContext } from "./Context";
+import Login from "./login";
+import Footer from "./footer";
+import { ProjectContext } from "./context";
 
 function Home() {
   const { state, dispatch } = useContext(ProjectContext);
-
-  const toggleText = () => {
-    setShowFullText((prevShowFullText) => !prevShowFullText);
-  };
-  console.log(state.token);
   return (
     <div className="min-h-[80vh]">
       <div className="text-center text-xl text-pri1 py-10 mb-10 ">
@@ -24,7 +19,7 @@ function Home() {
           <img src={pic} alt="picture" className="max-w-[40vw] h-auto" />
         </div>
         <div className="right bg-white p-10 shadow-md items-center">
-          <SignIn />
+          <Login />
         </div>
       </div>
       <div className="sticky top-[100%]">

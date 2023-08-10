@@ -19,7 +19,7 @@ function ProjectProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    fetch("https://academic-sphere-tables.onrender.com/session", {
+    fetch("http://127.0.0.1:5555/session", {
       method: "POST",
       headers: {
         Authorization: "Bearer " + initialState.token,
@@ -28,7 +28,6 @@ function ProjectProvider({ children }) {
       .then((res) => res.json())
       .then((data) => {
         dispatch({ type: "SET_USER", payload: data.user });
-        console.log(data)
       })
       .catch((error) => console.log(error));
   }, []);
