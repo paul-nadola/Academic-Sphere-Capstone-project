@@ -238,7 +238,6 @@ class Assessment(db.Model):
 
 
 class Grade(db.Model):
-
     __tablename__ = 'grades'
 
     grade_id = db.Column(db.Integer, primary_key=True)
