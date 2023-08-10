@@ -8,6 +8,7 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         load_instance = True
+        exclude =['_password_hash']
 
 
 class TeacherSchema(SQLAlchemyAutoSchema):
