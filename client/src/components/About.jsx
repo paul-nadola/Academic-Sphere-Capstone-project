@@ -39,11 +39,6 @@ function About() {
         backgroundPosition: 'center',
       }}
     >
-      <img
-        src="url"
-        alt="Prudent Group of Schools Logo"
-        className="h-16 w-16 absolute top-4 left-4"
-      />
       <div className="bg-opacity-75 bg-white p-8 rounded-lg shadow-md max-w-lg mx-auto mt-8">
         <h1 className="text-4xl font-bold mb-6">About Us</h1>
         <section className="text-left">
