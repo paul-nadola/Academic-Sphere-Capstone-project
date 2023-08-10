@@ -67,7 +67,7 @@ function StudentsPage() {
               <h4><b>Instructor:</b> {studentData.instructor}</h4>
               <h4><b>Parent:</b> {studentData.parent}</h4>
             </div>
-
+ 
             <div className="inline-block border rounded p-4 text-pri1">
               <div className='mb-5'>
                 
