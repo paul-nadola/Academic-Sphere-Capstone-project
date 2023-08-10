@@ -16,18 +16,12 @@ function About() {
       </Link>
       </button>
         
-      <button className='mt-4 mb-2'>
-      <Link to="/about" className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center">
-        <button>About</button>
-      </Link>
-      </button>
-      
       <button className="mt-4 mb-2">
             <Link
-              to="/signin"
+              to="/"
               className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
-              Sign Out
+              Back
             </Link>
           </button>
       </div>
@@ -47,13 +41,13 @@ function About() {
             
           </p>
           <p>
-            <span style={{ color: '#3B82F6' }}><b>Our Vision:</b></span> At Prudent Group of Schools, our vision is to be a leading institution of academic excellence, fostering an<br/> inclusive and innovative learning community that inspires students to become lifelong learners and compassionate global citizens.
+            <span style={{ color: '#872642' }}><b>Our Vision:</b></span> At Prudent Group of Schools, our vision is to be a leading institution of academic excellence, fostering an<br/> inclusive and innovative learning community that inspires students to become lifelong learners and compassionate global citizens.
           </p>
           <p>
-            <span style={{ color: '#3B82F6' }}><b>Our Mission:</b></span> Our mission is to provide a holistic and learner-centric education that fosters creativity, critical thinking, and ethical<br/> values. We strive to cultivate an atmosphere of mutual respect and collaboration among students, staff, and parents, working together<br/> to unlock the full potential of every individual.
+            <span style={{ color: '#872642' }}><b>Our Mission:</b></span> Our mission is to provide a holistic and learner-centric education that fosters creativity, critical thinking, and ethical<br/> values. We strive to cultivate an atmosphere of mutual respect and collaboration among students, staff, and parents, working together<br/> to unlock the full potential of every individual.
           </p>
           <p>
-            <span style={{ color: '#3B82F6' }}><b>Our Commitment to Quality Education:</b></span> Prudent Group of Schools is committed to delivering the highest standards of<br/> education through a comprehensive and progressive curriculum. We offer a broad range of academic programs and extracurricular<br/> activities, encouraging students to explore their interests and passions beyond the classroom.
+            <span style={{ color: '#872642' }}><b>Our Commitment to Quality Education:</b></span> Prudent Group of Schools is committed to delivering the highest standards of<br/> education through a comprehensive and progressive curriculum. We offer a broad range of academic programs and extracurricular<br/> activities, encouraging students to explore their interests and passions beyond the classroom.
           </p>
           <p>At Prudent Group of Schools, we are dedicated to nurturing well-rounded individuals who possess a strong moral compass and<br/> a thirst for knowledge. Together, as a community, we embrace diversity, promote academic excellence, and celebrate the<br/> achievements of every student.
 
