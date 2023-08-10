@@ -56,7 +56,7 @@ class SuperAdmin(db.Model):
     __tablename__ = 'superadmins'
 
     super_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
     DOB = db.Column(db.Date, nullable=False)
@@ -73,7 +73,7 @@ class Admin(db.Model):
     __tablename__ = 'admins'
 
     admin_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
     DOB = db.Column(db.Date, nullable=False)
@@ -91,7 +91,7 @@ class Teacher(db.Model):
     __tablename__ = 'teachers'
 
     teacher_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True,
                           unique=True, nullable=False)
@@ -121,7 +121,7 @@ class Student(db.Model):
     __tablename__ = 'students'
 
     student_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
     DOB = db.Column(db.Date, nullable=False)
@@ -152,7 +152,7 @@ class Parent(db.Model):
     __tablename__ = 'parents'
 
     parent_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True, nullable=False)
     first_name = db.Column(db.String(255), index=True, nullable=False)
     last_name = db.Column(db.String(255), index=True, nullable=False)
     address = db.Column(db.String(255), nullable=False)
@@ -193,7 +193,7 @@ class Course(db.Model):
     __tablename__ = 'courses'
 
     course_id = db.Column(db.Integer, primary_key=True)
-    course_name = db.Column(db.String(255), index=True, nullable=False)
+    course_name = db.Column(db.String(255), index=True,  unique=True, nullable=False)
     department_id = db.Column(
         db.Integer, db.ForeignKey('departments.department_id'))
 
@@ -230,7 +230,7 @@ class Assessment(db.Model):
     __tablename__ = 'assessments'
 
     assessment_id = db.Column(db.Integer, primary_key=True)
-    assessment_name = db.Column(db.String(255), nullable=False, index=True)
+    assessment_name = db.Column(db.String(255), nullable=False, unique=True,index=True)
     unit_id = db.Column(db.Integer, db.ForeignKey('units.unit_id'))
 
     def __repr__(self):
@@ -273,7 +273,7 @@ class TeacherAttendance(db.Model):
 
     attendance_id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), unique=True, nullable=False)
     attendance = db.Column(db.String(20))
 
     def __repr__(self):
@@ -286,7 +286,7 @@ class StudentAttendance(db.Model):
 
     attendance_id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
-    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
+    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'), unique=True, nullable=False)
     attendance = db.Column(db.String(20))
 
     def __repr__(self):
@@ -299,7 +299,7 @@ class LeaveOfAbsence(db.Model):
 
     leave_id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False, default=db.text('CURRENT_DATE'))
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'))
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), unique=True, nullable=False)
     start = db.Column(db.Date)
     end = db.Column(db.Date)
 
