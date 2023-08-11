@@ -73,4 +73,4 @@ function SuperAdmin() {
   )
 }
 
-export default Admin
+export default SuperAdmin

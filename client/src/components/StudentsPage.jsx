@@ -5,7 +5,7 @@ function StudentsPage() {
   return (
     <div>
      
-    <div className="flex justify-evenly">
+    {/* <div className="flex justify-evenly">
       <button className="mb-2">
         <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Home</button>
@@ -33,7 +33,7 @@ function StudentsPage() {
           </button>
           
           
-      </div>
+      </div> */}
       <div className="grid grid-cols-2 gap-4">
 
       <div className="p-4 border bg-red-800">
