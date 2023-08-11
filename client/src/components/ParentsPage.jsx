@@ -1,10 +1,39 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 function ParentsPage() {
+      const[currentUser, setCurrentUser] = useState([])
+    useEffect(() => {
+    const getUser = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        console.log('Token used:', token);
+        const response = await fetch(
+          'https://academic-sphere-tables.onrender.com/parent',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error('Failed to fetch current user:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        setCurrentUser(data.parent);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
   return (
     <div>
-      <div className="flex justify-evenly">
+      {/* <div className="flex justify-evenly">
       <button className="mb-2">
         <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Home</button>
@@ -30,23 +59,31 @@ function ParentsPage() {
               Sign Out
             </Link>
           </button>
-      </div>
+      </div> */}
         
           <div className="grid grid-cols-3 gap-4">
-      <div className="p-4 border bg-red-800">
-        <h3>DAVID JACKSON</h3>
-        <h4><b>Phone Number:</b> 0944244</h4>
-        <h4><b>Email:</b> djackson@gmail.com</h4>
-        <h4><b>Address:</b> P.O Box 464 Tokyo, Japan</h4>
+      {/* <div className="user-container"> */}
+      <div className="p-4 space-x-4">
+      <div className="p-4 border bg-white col-span-2">
+        <h3>First Name: {currentUser.first_name}</h3>
+          <p>Last Name: {currentUser.last_name}</p>
+          <p>Phone Number: {currentUser.phone_number}</p>
+          <p>Email: {currentUser.email}</p>
+          <p>Address: {currentUser.address}</p>
+          </div>
       </div>
-      <div className="p-4 border bg-blue-800">
+      <div className="p-4 border bg-white-800">
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h3>Student Details</h3>
-        <h4><b>Name:</b> Nicolas Jackson</h4>
-        <h4><b>Phone Number:</b> 0944244</h4>
-        <h4><b>Email:</b> nicolas@student.school.com</h4>
+        <h4><b>First Name:</b> {currentUser?.student?.first_name}</h4>
+        <h4><b>Last Name:</b> {currentUser?.student?.last_name}</h4>
+        
         
         <h4><b>Department:</b> Engineering</h4>
         <h4><b>Course:</b> Civil Engineering</h4>
+        </div>
+        </div>
         <br/>
         <hr/>
         <h4><b>Units: Year 1, Semester 1</b>
@@ -66,15 +103,15 @@ function ParentsPage() {
         </table>
         </h4>
       </div>
-      <div className="p-4 border bg-green-800">
+      <div className="p-4 border bg-sec3-800">
         <h3>Fee Information</h3>
         <h4><b>Fee Balance:</b> -5435</h4>
         <h4><b>Fee Paid:</b> 54000</h4>
       </div>
-      <div className="p-4 border bg-purple-800 col-span-2">
+      <div className="p-4 border bg-sec4 col-span-2">
         <h1>Inquiries</h1>
       </div>
-      <div className="p-4 border bg-pink-800">
+      <div className="p-4 border bg-white-800">
         <h1>NEWS AND UPDATES</h1>
         <ol className="list-decimal">
           <li>Mid-term break to start on 

@@ -9,7 +9,7 @@ import About from "./components/About";
 import SignIn from "./components/SignIn";
 import ParentsPage from "./components/ParentsPage";
 import StudentsPage from "./components/StudentsPage";
-import Login from "./components/Login";
+// import Login from "./components/Login";
 import SuperAdmin from "./components/SuperAdmin";
 import AdminsGet from "./components/AdminsGet";
 import Teachers from "./components/Teachers";
@@ -30,7 +30,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/login" element={<Login />} /> */}
           <Route path="/departments" element={<Departments />} />
           <Route path="/technology" element={<Technology />} />
           <Route path="/social-sciences" element={<SocialSciences />} />

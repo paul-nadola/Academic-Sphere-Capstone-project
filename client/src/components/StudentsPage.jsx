@@ -1,11 +1,40 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, {useState, useEffect} from 'react'
+// import { Link } from 'react-router-dom';
 
 function StudentsPage() {
+        const[currentUser, setCurrentUser] = useState([])
+    useEffect(() => {
+    const getUser = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        console.log('Token used:', token);
+        const response = await fetch(
+          'https://academic-sphere-tables.onrender.com/student',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error('Failed to fetch current user:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        setCurrentUser(data.student);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
   return (
     <div>
      
-    <div className="flex justify-evenly">
+    {/* <div className="flex justify-evenly">
       <button className="mb-2">
         <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Home</button>
@@ -33,22 +62,27 @@ function StudentsPage() {
           </button>
           
           
-      </div>
+      </div> */}
       <div className="grid grid-cols-2 gap-4">
 
-      <div className="p-4 border bg-red-800">
-        <h3>CHRISTOPHER JACKSON</h3>
-        <h4><b>Enrolled:</b>  April, 17 2023</h4>
-        <h4><b>Email:</b> chrisj@gmail.com</h4>
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
+        <h3><b>First Name:</b> {currentUser.first_name}</h3>
+        <h3><b>Last Name:</b> {currentUser.last_name}</h3>
+        <h3><b>Date of Birth:</b> {currentUser.DOB}</h3>
+        <h3><b>Email:</b> {currentUser.email}</h3>
+        <h3><b>Phone Number:</b> {currentUser.phone_number}</h3>
+        <h4><b>Enrolled:</b>  {currentUser.enrollment_date}</h4>
         <h4><b>Department:</b> Technology</h4>
         <h4><b>Course:</b> Cyber Security</h4>
         <h4><b>Grade:</b> A, 81pts</h4>
         <h4><b>Instructor:</b> Kaplan Dunphy</h4>
         <h4><b>Parent:</b> David Jackson</h4>
       </div>
+      </div>
 
-      <div className="p-4 border bg-purple-800">
-        <div className='mb-5'>
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h1>Attendance</h1>
         <h4><b>Grade for Attendance:</b>  80%</h4>
         <h4><b>Days Present:</b> 3</h4>
@@ -62,15 +96,16 @@ function StudentsPage() {
         </div>
       </div>
 
-      <div className="p-4 border bg-blue-800 col-span-2">
-        <h3>Assessment Results for Christopher Jackson</h3>
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
+        <h3>Assessment Results for Pau Naddy</h3>
         <h4><b>Units: Year 1, Semester 1</b>
-        <table className="table-auto w-full mt-4">
+       <table className="table-auto w-full mt-4 bg-white p-4 text-pri2">
           <tr>
             <th className="border px-4 py-2">Unit</th>
             <th className="border px-4 py-2">Marks</th>
             <th className="border px-4 py-2">Grade</th>
-            <th className="border px-4 py-2">Instructor's Comments</th>
+            <th className="border px-4 py-2">Instructor Comments</th>
           </tr>
           <tr>
             <td className="border px-4 py-2">Digital threats</td>
@@ -87,9 +122,7 @@ function StudentsPage() {
         </table>
         </h4>
       </div>
-
-      
-     
+    </div>
     </div>
     </div>
     
