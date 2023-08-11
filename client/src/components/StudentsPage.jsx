@@ -65,7 +65,8 @@ function StudentsPage() {
       </div> */}
       <div className="grid grid-cols-2 gap-4">
 
-      <div className="p-4 border bg-red-800">
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h3><b>First Name:</b> {currentUser.first_name}</h3>
         <h3><b>Last Name:</b> {currentUser.last_name}</h3>
         <h3><b>Date of Birth:</b> {currentUser.DOB}</h3>
@@ -78,9 +79,10 @@ function StudentsPage() {
         <h4><b>Instructor:</b> Kaplan Dunphy</h4>
         <h4><b>Parent:</b> David Jackson</h4>
       </div>
+      </div>
 
-      <div className="p-4 border bg-purple-800">
-        <div className='mb-5'>
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h1>Attendance</h1>
         <h4><b>Grade for Attendance:</b>  80%</h4>
         <h4><b>Days Present:</b> 3</h4>
@@ -94,7 +96,8 @@ function StudentsPage() {
         </div>
       </div>
 
-      <div className="p-4 border bg-blue-800 col-span-2">
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h3>Assessment Results for Christopher Jackson</h3>
         <h4><b>Units: Year 1, Semester 1</b>
         <table className="table-auto w-full mt-4">
@@ -102,7 +105,7 @@ function StudentsPage() {
             <th className="border px-4 py-2">Unit</th>
             <th className="border px-4 py-2">Marks</th>
             <th className="border px-4 py-2">Grade</th>
-            <th className="border px-4 py-2">Instructor's Comments</th>
+            <th className="border px-4 py-2">Instructor Comments</th>
           </tr>
           <tr>
             <td className="border px-4 py-2">Digital threats</td>
@@ -119,9 +122,7 @@ function StudentsPage() {
         </table>
         </h4>
       </div>
-
-      
-     
+    </div>
     </div>
     </div>
     
