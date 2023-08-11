@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import icon from "../assets/icon.png";
 import { ProjectContext } from "./Context";
-import {  useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom';
 
 const Header = () => {
