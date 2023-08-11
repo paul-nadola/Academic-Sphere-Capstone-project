@@ -100,7 +100,7 @@ function StudentsPage() {
             <div className="inline-block border rounded p-4 text-pri1">
         <h3>Assessment Results for Christopher Jackson</h3>
         <h4><b>Units: Year 1, Semester 1</b>
-        <table className="table-auto w-full mt-4">
+       <table className="table-auto w-full mt-4 bg-white p-4 text-pri2">
           <tr>
             <th className="border px-4 py-2">Unit</th>
             <th className="border px-4 py-2">Marks</th>
