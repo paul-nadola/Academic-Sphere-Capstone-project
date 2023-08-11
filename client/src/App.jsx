@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Departments from "./components/Departments";
@@ -14,9 +14,9 @@ import SuperAdmin from "./components/SuperAdmin";
 import AdminsGet from "./components/AdminsGet";
 import Teachers from "./components/Teachers";
 // import Nav from "./components/Nav";
-// import Teachers from "./components/Teachers";
 import Header from "./components/Header";
 import TeachersPage from "./components/Teachers";
+import TeacherInfo from "./components/TeacherInfo";
 import Admin from "./components/Admin";
 
 function App() {
@@ -41,6 +41,8 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/students" element={<StudentsPage />} />
           <Route path="/teachers" element={<TeachersPage />} />
+          <Route path="/teacher" element={<Teachers />} />
+          <Route path="/teacherinfo" element={<TeacherInfo/>} />
           <Route path="/parents" element={<ParentsPage />} />
         </Routes>
       </div>

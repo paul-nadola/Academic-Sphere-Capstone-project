@@ -2,6 +2,8 @@ import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import icon from "../assets/icon.png";
 import { ProjectContext } from "./Context";
+import {  useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -19,16 +21,23 @@ const Header = () => {
         </div>
         <div className="flex text-xl items-center">
           <div className="hover:bg-pri2 hover:text-white p-2 rounded-md">
-            ABOUT
+          <button className="mt-4 mb-2">
+          <Link
+            to="/about"
+            className="block  text-pri1 py-2 px-2 rounded hover:bg-pri1 transition duration-300  text-center"
+          >
+            About
+          </Link>
+        </button>
           </div>
-          <div>
+          {/* <div>
             <NavLink
               to={"/login"}
               className="hover:bg-pri2 hover:text-white p-2 rounded-md"
             >
               CONTACT
             </NavLink>
-          </div>
+          </div> */}
           <div>
             <button
               onClick={() => {
