@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Teachers from './Teachers'
+// import Teachers from './Teachers'
 // import AdminsGet from './AdminsGet'
 
 
@@ -28,7 +28,7 @@ function SuperAdmin() {
         const data = await response.json();
         setCurrentUser(data.current);
       } catch (error) {
-        console.error('Error fetching teachers:', error);
+        console.error('Error fetching current user:', error);
       }
     };
 
@@ -58,6 +58,7 @@ function SuperAdmin() {
       </div>
       
         <div className="user-container" >
+          <h2>SUPER ADMIN PROFILE</h2>
           <h3>First Name: {currentUser.first_name}</h3>
           <p>Last Name: {currentUser.last_name}</p>
           <p>Date of Birth: {currentUser.DOB}</p>

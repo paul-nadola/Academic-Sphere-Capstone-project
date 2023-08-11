@@ -3,15 +3,15 @@ import { useFormik } from 'formik';
 import { Link } from 'react-router-dom';
 
 
-function Teachers() {
-    const[teachers, setTeachers] = useState([])
+function Students() {
+    const[students, setStudents] = useState([])
     useEffect(() => {
-    const getTeachers = async () => {
+    const getStudents = async () => {
       try {
         const token = sessionStorage.getItem('token');
         console.log('Token used:', token);
         const response = await fetch(
-          'https://academic-sphere-tables.onrender.com/superadmin_create',
+          'https://academic-sphere-tables.onrender.com/admin_create',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -20,23 +20,23 @@ function Teachers() {
         );
 
         if (!response.ok) {
-          console.error('Failed to fetch teachers:', response.status);
+          console.error('Failed to fetch students:', response.status);
           return;
         }
 
         const data = await response.json();
-        setTeachers(data.teachers);
+        setStudents(data.students);
       } catch (error) {
-        console.error('Error fetching teachers:', error);
+        console.error('Error fetching students:', error);
       }
     };
 
-    getTeachers();
+    getStudents();
   }, []);
 
-    function createTeacher(user) {
+    function createStudent(user) {
     const token = sessionStorage.getItem('token');
-    fetch('https://academic-sphere-tables.onrender.com/superadmin_create', {
+    fetch('https://academic-sphere-tables.onrender.com/admin_create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ function Teachers() {
       },
       body: JSON.stringify(user),
     }).then(() => {
-      createTeacher();
+      createStudent();
     });
   }
 
@@ -54,25 +54,27 @@ function Teachers() {
     user_name: "",
     email: "",
     password: "",
-    user_type: "teacher",
+    user_type: "student",
     first_name: "",
     last_name: "",
     DOB: "",
     address: "",
     phone_number: "",
-    employment_date: "",
-    appraisal: "",
-    
+    enrollment_date: "",
+    department_id: "",
+    course_id: "",
+    payment_id: "",
+    teacher_id: "",
     },
     onSubmit: (values) => {
-      createTeacher(values);
+      createStudent(values);
     },
   });
   return (
     <>
     <button className='mt-4'>
             <Link
-              to="/superadmin"
+              to="/admin"
               className="block bg-pri2 text-white py-2 px-4 rounded hover:bg-pri1 transition duration-300 w-full text-center"
             >
               
@@ -80,7 +82,7 @@ function Teachers() {
             </Link>
             </button>
     <div className="create-teacheruser">
-      <h1>CREATE A NEW TEACHER</h1>
+      <h1>CREATE A NEW STUDENT</h1>
       <form className="teacher-form" onSubmit={handleSubmit}>
         <label htmlFor="user_name">Enter User Name: </label>
         <input type="text" value={values.user_name} onChange={handleChange} name="user_name" /><br />
@@ -98,24 +100,23 @@ function Teachers() {
         <input type="text" value={values.address} onChange={handleChange} name="address" /><br />
         <label htmlFor="phone_number">Enter Phone Number: </label>
         <input type="number" value={values.phone_number} onChange={handleChange} name="phone_number" /><br />
-        <label htmlFor="employment_date">Enter Date of Employment: </label>
-        <input type="date" value={values.employment_date} onChange={handleChange} name="employment_date" /><br />
-        <label htmlFor="appraisal">Enter User Appraisal : </label>
-        <input type="number" value={values.appraisal} onChange={handleChange} name="appraisal" /><br />
+        <label htmlFor="enrollment_date">Enter Date of Enrollment: </label>
+        <input type="date" value={values.enrollment_date} onChange={handleChange} name="enrollment_date" /><br />
+        <label htmlFor="department_id">Enter Department ID : </label>
+        <input type="number" value={values.department_id} onChange={handleChange} name="department_id" /><br />
+        <label htmlFor="course_id">Enter Course ID : </label>
+        <input type="number" value={values.course_id} onChange={handleChange} name="course_id" /><br />
+        <label htmlFor="teacher_id">Enter Teacher ID : </label>
+        <input type="number" value={values.teacher_id} onChange={handleChange} name="teacher_id" /><br />
         <input className = "btn" type="submit" value="Create Teacher" /><br />
       </form>
-      <h1>TEACHERS</h1>
-        {teachers.map((teacher) => (
-        <div className="teacher-container" key={teacher.teacher_id}>
-
-          <h3>First Name: {teacher.first_name}</h3>
-          <p>Last Name: {teacher.last_name}</p>
-          <p>Date of Birth: {teacher.DOB}</p>
-          <p>Email: {teacher.email}</p>
-          <p>Phone Number: {teacher.phone_number}</p>
-          <p>Address: {teacher.address}</p>
-          <p>Employment Date: {teacher.employment_date}</p>
-          <p>Appraisal: {teacher.appraisal}</p>
+      <h1>STUDENTS</h1>
+        {students.map((student) => (
+        <div className="teacher-container" key={student.student_id}>
+          <h3>First Name: {student.first_name}</h3>
+          <p>Last Name: {student.last_name}</p>
+          <p>Phone Number: {student.phone_number}</p>
+          <p>Email: {student.email}</p>
         </div>
       ))}
     </div>
@@ -124,4 +125,4 @@ function Teachers() {
   )
 }
 
-export default Teachers
+export default Students

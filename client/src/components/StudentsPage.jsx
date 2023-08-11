@@ -1,11 +1,40 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, {useState, useEffect} from 'react'
+// import { Link } from 'react-router-dom';
 
 function StudentsPage() {
+        const[currentUser, setCurrentUser] = useState([])
+    useEffect(() => {
+    const getUser = async () => {
+      try {
+        const token = sessionStorage.getItem('token');
+        console.log('Token used:', token);
+        const response = await fetch(
+          'https://academic-sphere-tables.onrender.com/student',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error('Failed to fetch current user:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        setCurrentUser(data.student);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    getUser();
+  }, []);
   return (
     <div>
      
-    <div className="flex justify-evenly">
+    {/* <div className="flex justify-evenly">
       <button className="mb-2">
         <Link to="/" className='block bg-gray-200 text-blue-600 py-2 px-4 rounded hover:bg-gray-300 transition duration-300 w-full text-center'>
         <button>Home</button>
@@ -33,13 +62,16 @@ function StudentsPage() {
           </button>
           
           
-      </div>
+      </div> */}
       <div className="grid grid-cols-2 gap-4">
 
       <div className="p-4 border bg-red-800">
-        <h3>CHRISTOPHER JACKSON</h3>
-        <h4><b>Enrolled:</b>  April, 17 2023</h4>
-        <h4><b>Email:</b> chrisj@gmail.com</h4>
+        <h3><b>First Name:</b> {currentUser.first_name}</h3>
+        <h3><b>Last Name:</b> {currentUser.last_name}</h3>
+        <h3><b>Date of Birth:</b> {currentUser.DOB}</h3>
+        <h3><b>Email:</b> {currentUser.email}</h3>
+        <h3><b>Phone Number:</b> {currentUser.phone_number}</h3>
+        <h4><b>Enrolled:</b>  {currentUser.enrollment_date}</h4>
         <h4><b>Department:</b> Technology</h4>
         <h4><b>Course:</b> Cyber Security</h4>
         <h4><b>Grade:</b> A, 81pts</h4>

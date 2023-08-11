@@ -1,12 +1,12 @@
 import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import icon from "../assets/icon.png";
 import { ProjectContext } from "./Context";
-import {  useNavigate } from 'react-router-dom'
 
 const Header = () => {
   const navigate = useNavigate();
   const { state, dispatch } = useContext(ProjectContext);
+  console.log(state.user);
   return (
     <>
       <div className="header-container justify-between md:flex text-cream bg-white px-10 text-pri1 py-10 shadow-md mb-5 items-center">
@@ -32,10 +32,9 @@ const Header = () => {
           <div>
             <button
               onClick={() => {
-                sessionStorage.removeItem("token")
-                navigate("/");
-                window.location.reload()
-                
+                sessionStorage.removeItem("token"),
+                navigate("/")
+                window.location.reload();
               }}
               className="hover:text-red-500"
             >
