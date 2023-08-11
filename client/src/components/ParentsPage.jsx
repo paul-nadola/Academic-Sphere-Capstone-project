@@ -62,15 +62,19 @@ function ParentsPage() {
       </div> */}
         
           <div className="grid grid-cols-3 gap-4">
-      <div className="user-container">
+      {/* <div className="user-container"> */}
+      <div className="p-4 space-x-4">
+      <div className="p-4 border bg-white col-span-2">
         <h3>First Name: {currentUser.first_name}</h3>
           <p>Last Name: {currentUser.last_name}</p>
           <p>Phone Number: {currentUser.phone_number}</p>
           <p>Email: {currentUser.email}</p>
           <p>Address: {currentUser.address}</p>
-          
+          </div>
       </div>
-      <div className="p-4 border bg-blue-800">
+      <div className="p-4 border bg-white-800">
+      <div className="p-4 space-x-4">
+            <div className="inline-block border rounded p-4 text-pri1">
         <h3>Student Details</h3>
         <h4><b>First Name:</b> {currentUser?.student?.first_name}</h4>
         <h4><b>Last Name:</b> {currentUser?.student?.last_name}</h4>
@@ -78,6 +82,8 @@ function ParentsPage() {
         
         <h4><b>Department:</b> Engineering</h4>
         <h4><b>Course:</b> Civil Engineering</h4>
+        </div>
+        </div>
         <br/>
         <hr/>
         <h4><b>Units: Year 1, Semester 1</b>
@@ -97,15 +103,15 @@ function ParentsPage() {
         </table>
         </h4>
       </div>
-      <div className="p-4 border bg-green-800">
+      <div className="p-4 border bg-sec3-800">
         <h3>Fee Information</h3>
         <h4><b>Fee Balance:</b> -5435</h4>
         <h4><b>Fee Paid:</b> 54000</h4>
       </div>
-      <div className="p-4 border bg-purple-800 col-span-2">
+      <div className="p-4 border bg-sec4 col-span-2">
         <h1>Inquiries</h1>
       </div>
-      <div className="p-4 border bg-pink-800">
+      <div className="p-4 border bg-white-800">
         <h1>NEWS AND UPDATES</h1>
         <ol className="list-decimal">
           <li>Mid-term break to start on 
