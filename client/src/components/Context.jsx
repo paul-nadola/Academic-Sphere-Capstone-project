@@ -30,7 +30,7 @@ function ProjectProvider({ children }) {
         dispatch({ type: "SET_USER", payload: data.user });
         console.log(data)
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.log(error));
   }, []);
 
   return (

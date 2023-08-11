@@ -31,7 +31,6 @@ function SignIn() {
       });
       const data = await response.json();
       // redirect to a new page on successful login.
-      console.log(data.token);
       dispatch({ type: "SET_USER", payload: data.user });
       sessionStorage.setItem("token", data.token);
       console.log(data.token);
