@@ -60,37 +60,48 @@ function TeachersPage() {
     getStudents();
   }, []);
   return (
-    <div>
-      <div className="p-4 space-x-4">
+    <div >
+      <div className="p-4 space-x-4 flex flex-col items-center">
+        <h1 className="font text-5xl">Welcome, {currentUser.first_name}!</h1>
       <div className="p-4 border bg-white col-span-2">
-        <h3>First Name: {currentUser.first_name}</h3>
-          <p>Last Name: {currentUser.last_name}</p>
-          <p>Phone Number: {currentUser.phone_number}</p>
-          <p>Email: {currentUser.email}</p>
-          <p>Address: {currentUser.address}</p>
+        <h3><b>First Name: </b>{currentUser.first_name}</h3>
+          <p><b>Last Name: </b>{currentUser.last_name}</p>
+          <p><b>Phone Number: </b>{currentUser.phone_number}</p>
+          <p><b>Email: </b>{currentUser.email}</p>
+          <p><b>Address: </b>{currentUser.address}</p>
           </div>
       </div>
-            <div className="p-4 border bg-white-800">
-      <div className="p-4 space-x-4">
-            <div className="inline-block border rounded p-4 text-pri1">
-        {students.map(student => (
-          <li key={student.student_id}>
-            <p>Name: {student.first_name} {student.last_name}</p>
-            <p>Date of Birth: {student.DOB}</p>
-            <p>Email: {student.email}</p>
-            <p>Address: {student.address}</p>
-            <p>Phone Number: {student.phone_number}</p>
-            <p>Enrollemnt Date: {student.enrollment_date}</p>
-            <h3>PARENT DETAILS</h3>
-            <p>Name: {student?.parent?.first_name} {student?.parent?.last_name}</p>
-            <p>Email: {student?.parent?.email}</p>
-            <p>Address: {student?.parent?.address}</p>
-            <p>Phone Number: {student?.parent?.phone_number}</p>
-            {/* Add more student information here */}
-          </li>
-        ))}
+            <div className="p-4 border  space-x-4 mx-auto max-w-7xl">
+      {/* <div className="p-4 space-x-4 mx-auto max-w-7xl"> */}
+            <div className="inline-block border rounded p-4 text-pri1 w-full">
+              
+            {students.map(student => (
+      <div key={student.student_id} className="flex flex-row space-x-4">
+        
+        <div className="w-1/2">
+          <h2>STUDENT DETAILS</h2>
+          <h1>Name: {student.first_name} {student.last_name}</h1>
+          <p>Date of Birth: {student.DOB}</p>
+          <p>Email: {student.email}</p>
+          <p>Address: {student.address}</p>
+          <p>Phone Number: {student.phone_number}</p>
+          <p>Enrollment Date: {student.enrollment_date}</p>
+          <br/>
+          <br/>
+          <br/>
         </div>
+        <div className="w-1/2 mt-4 flex-grow">
+          <hr />
+          <h3>PARENT DETAILS</h3>
+          <p>Name: {student?.parent?.first_name} {student?.parent?.last_name}</p>
+          <p>Email: {student?.parent?.email}</p>
+          <p>Address: {student?.parent?.address}</p>
+          <p>Phone Number: {student?.parent?.phone_number}</p>
         </div>
+      </div>
+    ))}
+        </div>
+        {/* </div> */}
         <br/>
         <hr/>
         {/* <h4><b>Units: Year 1, Semester 1</b>
